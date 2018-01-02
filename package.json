@@ -1,0 +1,41 @@
+{
+  "name": "twitter-module",
+  "version": "1.0.0",
+  "description": "Player Module for Twitter",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rise-Vision/twitter-module.git"
+  },
+  "author": "Rise Vision",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/Rise-Vision/twitter-module/issues"
+  },
+  "homepage": "https://github.com/Rise-Vision/twitter-module#readme",
+  "devDependencies": {
+    "babel-minify-webpack-plugin": "^0.2.0",
+    "copy-webpack-plugin": "^4.1.1",
+    "istanbul": "^0.4.5",
+    "eslint": "^4.10.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-node": "^5.2.0",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "mocha": "^4.0.0",
+    "mocha-junit-reporter": "^1.15.0",
+    "simple-mock": "^0.8.0",
+    "source-map-support": "^0.5.0",
+    "unzipsfx-webpack-plugin": "git+https://github.com/Rise-Vision/unzipsfx-webpack-plugin.git",
+    "webpack": "^3.7.1",
+    "webpack-node-externals": "^1.6.0",
+    "zip-webpack-plugin": "^2.0.0"
+  },
+  "dependencies": {
+    "common-display-module": "git://github.com/Rise-Vision/common-display-module.git#v2.1.4"
+  }
+}
