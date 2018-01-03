@@ -154,7 +154,7 @@ describe("Watch - Unit", ()=> {
       // check it's a WATCH event
       assert.equal(event.topic, "watch");
       // check the URL of the file.
-      assert.equal(event.filePath, "risevision-company-notifications/companyXXXXXX/twitter.txt");
+      assert.equal(event.filePath, "risevision-company-notifications/companyXXXXXX/credentials/twitter.txt");
 
       done();
     });
