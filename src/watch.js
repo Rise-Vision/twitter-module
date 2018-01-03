@@ -90,7 +90,7 @@ function receiveCredentialsFile(message) {
       // allows linking in tests.
       return Promise.resolve();
 
-    default: return loadCurrentConfiguration(message.ospath);
+    default: return loadCurrentCredentials(message.ospath);
   }
 }
 
@@ -102,7 +102,7 @@ function receiveContentFile(message) {
     try {
       const fileJSON = JSON.parse(fileData);
 
-        logger.file(`Setting companyId ${JSON.stringify(fileJSON.content.schedule.companyIdd)}`);
+      logger.file(`Setting companyId ${JSON.stringify(fileJSON.content.schedule.companyIdd)}`);
       config.setCompanyId(fileJSON.content.schedule.companyId);
       return sendWatchMessagesForCredentials().then(() => watchMessagesAlreadySentForCredentials = true);
     } catch (error) {

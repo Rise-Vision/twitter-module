@@ -1,7 +1,6 @@
 const commonConfig = require("common-display-module");
 const config = require("./config");
 const watch = require("./watch");
-const interval = require("./interval-schedule-check");
 const companyConfigBucket = "risevision-company-notifications";
 const logger = require("./logger");
 

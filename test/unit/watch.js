@@ -64,7 +64,7 @@ describe("Watch - Unit", ()=> {
     .then(() => {
       // so WATCH messages should have been sent for both screen-control.txt and content.json files
       assert(common.broadcastMessage.called);
-      assert.equal(2, common.broadcastMessage.callCount);
+      assert.equal(1, common.broadcastMessage.callCount);
 
       {
         // this is the request for content.json
@@ -76,7 +76,7 @@ describe("Watch - Unit", ()=> {
         // check it's a WATCH event
         assert.equal(event.topic, "watch");
         // check the URL of the file.
-        assert.equal(event.filePath, "risevision-display-notifications/DIS123/content.txt");
+        assert.equal(event.filePath, "risevision-display-notifications/DIS123/content.json");
       }
 
       done();
@@ -130,18 +130,33 @@ describe("Watch - Unit", ()=> {
     });
   });
 
-  it("should receive content file", ()=>{
-    const mockScheduleText = '{"content": {"schedule": {"companyId": companyXXXXXX}}}';
+  it("should receive content file", done =>{
+    const mockScheduleText = '{"content": {"schedule": {"companyId": "companyXXXXXX"}}}';
     simple.mock(platform, "readTextFile").resolveWith(mockScheduleText);
-    simple.mock(config, "setTimeline").returnWith();
 
-    return watch.receiveContentFile({
+    watch.receiveContentFile({
       topic: "file-update",
       status: "CURRENT",
       ospath: "xxxxxxx"
     })
     .then(() => {
-      assert.equal(config.getCompanyId, "companyXXXXXX");
+      assert.equal(config.getCompanyId(), "companyXXXXXX");
+
+      assert(common.broadcastMessage.called);
+      assert.equal(1, common.broadcastMessage.callCount);
+
+      // this is the request for content.json
+      const event = common.broadcastMessage.calls[0].args[0];
+
+      assert(event);
+      // check we sent it
+      assert.equal(event.from, "twitter");
+      // check it's a WATCH event
+      assert.equal(event.topic, "watch");
+      // check the URL of the file.
+      assert.equal(event.filePath, "risevision-company-notifications/companyXXXXXX/twitter.txt");
+
+      done();
     });
   });
 
