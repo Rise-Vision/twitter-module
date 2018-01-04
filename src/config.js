@@ -1,5 +1,5 @@
 const common = require("common-display-module");
-const twitterAppCredentials = require("twitter-app-credentials");
+const twitterAppCredentials = require("./twitter-app-credentials");
 
 const moduleName = "twitter";
 
