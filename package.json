@@ -37,10 +37,12 @@
     "unzipsfx-webpack-plugin": "git+https://github.com/Rise-Vision/unzipsfx-webpack-plugin.git",
     "webpack": "^3.7.1",
     "webpack-node-externals": "^1.6.0",
-    "zip-webpack-plugin": "^2.0.0"
+    "zip-webpack-plugin": "^2.0.0",
+    "local-messaging-module": "git@github.com:Rise-Vision/local-messaging-module.git#775d2"
   },
   "dependencies": {
     "common-display-module": "git://github.com/Rise-Vision/common-display-module.git#v2.1.4",
-    "rise-common-electron": "git://github.com/Rise-Vision/rise-common-electron.git#v2.2.5"
+    "rise-common-electron": "git://github.com/Rise-Vision/rise-common-electron.git#v2.2.5",
+    "twitter": "^1.7.1"
   }
 }
