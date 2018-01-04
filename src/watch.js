@@ -1,7 +1,7 @@
 /* eslint-disable line-comment-position, no-inline-comments */
 
 const common = require("common-display-module");
-const config = require("./config");
+const config = require("./config/config");
 const logger = require("./logger");
 const platform = require("rise-common-electron").platform;
 

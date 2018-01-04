@@ -2,8 +2,8 @@
 const common = require("common-display-module");
 const {
   bqProjectName, bqDataset, bqTable, failedEntryFile, logFolder,
-  moduleName, getModuleVersion
-} = require("./config");
+  moduleName
+} = require("./config/config");
 
 const externalLogger = require("common-display-module/external-logger")(bqProjectName, bqDataset, failedEntryFile);
 const logger = require("rise-common-electron/logger")(externalLogger, logFolder, moduleName);
@@ -15,7 +15,7 @@ function detailsFor(eventDetails, data = {}) {
     Object.assign({
       "event_details": eventDetails,
       "display_id": displayId,
-      "version": getModuleVersion() || "unknown"
+      "version": common.getModuleVersion(moduleName) || "unknown"
     }, data)
   );
 }

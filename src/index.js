@@ -1,30 +1,13 @@
 const commonConfig = require("common-display-module");
-const config = require("./config");
-const watch = require("./watch");
-const companyConfigBucket = "risevision-company-notifications";
+const config = require("./config/config");
 const logger = require("./logger");
+const messaging = require("./messaging");
 
-
-commonConfig.receiveMessages(config.moduleName).then(receiver =>
-{
-  receiver.on("message", message => {
-    switch (message.topic.toUpperCase()) {
-      case "CLIENT-LIST":
-        return watch.checkIfLocalStorageIsAvailable(message);
-      case "FILE-UPDATE":
-        if (!message.filePath) {return;}
-        if (!message.filePath.startsWith(companyConfigBucket)) {return;}
-
-        if (message.filePath.endsWith("/twitter.json")) {
-          return watch.receiveCredentialsFile(message);
-        }
-        if (message.filePath.endsWith("/content.json")) {
-          return watch.receiveContentFile(message);
-        }
-    }
+messaging.init()
+  .then(()=>{
+    commonConfig.getClientList(config.moduleName);
+    if (process.env.NODE_ENV !== "test") {logger.all("started", "")}
+  })
+  .catch(error =>{
+    logger.error(error.message, `Could not start ${config.moduleName} module`)
   });
-
-  commonConfig.getClientList(config.moduleName);
-
-  if (process.env.NODE_ENV !== "test") {logger.all("started", "")}
-});
