@@ -94,7 +94,7 @@ describe("Watch - Unit", ()=> {
     watch.receiveCredentialsFile({
       topic: "file-update",
       status: "CURRENT",
-      ospath: "xxxxxxx/twitter.txt"
+      ospath: "xxxxxxx/twitter.json"
     })
     .then(() => {
       const credentials = config.getTwitterCredentials();
@@ -116,7 +116,7 @@ describe("Watch - Unit", ()=> {
     watch.receiveCredentialsFile({
       topic: "file-update",
       status: "DELETED",
-      ospath: "xxxxxxx/twitter.txt"
+      ospath: "xxxxxxx/twitter.json"
     })
     .then(() => {
       assert(!config.getTwitterCredentials());
@@ -154,7 +154,7 @@ describe("Watch - Unit", ()=> {
       // check it's a WATCH event
       assert.equal(event.topic, "watch");
       // check the URL of the file.
-      assert.equal(event.filePath, "risevision-company-notifications/companyXXXXXX/credentials/twitter.txt");
+      assert.equal(event.filePath, "risevision-company-notifications/companyXXXXXX/credentials/twitter.json");
 
       done();
     });

@@ -35,7 +35,7 @@ function checkIfLocalStorageIsAvailable(message) {
 
 function sendWatchMessagesForCredentials() {
   if (!watchMessagesAlreadySentForCredentials) {
-    const filePath = `risevision-company-notifications/${config.getCompanyId()}/credentials/twitter.txt`;
+    const filePath = `risevision-company-notifications/${config.getCompanyId()}/credentials/twitter.json`;
 
     common.broadcastMessage({
       from: config.moduleName,

@@ -15,7 +15,7 @@ commonConfig.receiveMessages(config.moduleName).then(receiver =>
         if (!message.filePath) {return;}
         if (!message.filePath.startsWith(companyConfigBucket)) {return;}
 
-        if (message.filePath.endsWith("/twitter.txt")) {
+        if (message.filePath.endsWith("/twitter.json")) {
           return watch.receiveCredentialsFile(message);
         }
         if (message.filePath.endsWith("/content.json")) {
