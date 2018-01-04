@@ -62,7 +62,7 @@ describe("Watch - Unit", ()=> {
       clients: ["logging", "system-metrics", "local-storage"]
     })
     .then(() => {
-      // so WATCH messages should have been sent for both screen-control.txt and content.json files
+      // so WATCH messages should have been sent for content.json file
       assert(common.broadcastMessage.called);
       assert.equal(1, common.broadcastMessage.callCount);
 
@@ -89,7 +89,7 @@ describe("Watch - Unit", ()=> {
   });
 
   it("should receive credentials file", done => {
-    simple.mock(platform, "readTextFile").resolveWith('{"accessToken":"dsadsa","refreshToken":"dashdsa"}');
+    simple.mock(platform, "readTextFile").resolveWith('{"oauth_token":"dsadsa","oauth_token_secret":"dashdsa"}');
 
     watch.receiveCredentialsFile({
       topic: "file-update",
@@ -100,8 +100,8 @@ describe("Watch - Unit", ()=> {
       const credentials = config.getTwitterCredentials();
 
       assert(credentials);
-      assert.equal(credentials.accessToken, "dsadsa");
-      assert.equal(credentials.refreshToken, "dashdsa");
+      assert.equal(credentials.oauth_token, "dsadsa");
+      assert.equal(credentials.oauth_token_secret, "dashdsa");
 
       done();
     })
@@ -109,6 +109,20 @@ describe("Watch - Unit", ()=> {
       assert.fail(error)
 
       done()
+    });
+  });
+
+  it("should catch invalid credentials", ()=>{
+    simple.mock(platform, "readTextFile").resolveWith('{}');
+
+    watch.receiveCredentialsFile({
+      topic: "file-update",
+      status: "CURRENT",
+      ospath: "xxxxxxx/twitter.json"
+    })
+    .then(() => {
+      assert(logger.error.lastCall.args[0].includes("Invalid Credentials"));
+      assert(logger.error.lastCall.args[1].startsWith("Could not parse"));
     });
   });
 
@@ -157,6 +171,21 @@ describe("Watch - Unit", ()=> {
       assert.equal(event.filePath, "risevision-company-notifications/companyXXXXXX/credentials/twitter.json");
 
       done();
+    });
+  });
+
+  it("should catch invalid company id", ()=>{
+    const mockScheduleText = '{"content": {"schedule": {}}}';
+    simple.mock(platform, "readTextFile").resolveWith(mockScheduleText);
+
+    return watch.receiveContentFile({
+      topic: "file-update",
+      status: "CURRENT",
+      ospath: "xxxxxxx"
+    })
+    .then(() => {
+      assert(logger.error.lastCall.args[0].includes("Invalid CompanyId"));
+      assert(logger.error.lastCall.args[1].startsWith("Could not parse"));
     });
   });
 

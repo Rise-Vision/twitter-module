@@ -60,7 +60,7 @@ describe("Watch - Integration", ()=>
           assert.equal(common.broadcastMessage.callCount, 1);
 
           {
-            // this is the request for screen-control.txt
+            // this is the request for content.json
             const event = common.broadcastMessage.calls[0].args[0];
 
             assert(event);

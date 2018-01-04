@@ -70,7 +70,11 @@ function loadCurrentCredentials(credentialsPath) {
     {
       const credentials = JSON.parse(data);
 
-      logger.debug(`loading credentials ${JSON.stringify(credentials)}`);
+      if (!Reflect.has(credentials, "oauth_token") || !Reflect.has(credentials, "oauth_token_secret")) {
+        throw new Error("Invalid Credentials");
+      }
+
+      logger.file(`credentials changed ${JSON.stringify(credentials)}`);
 
       config.setTwitterCredentials(credentials);
     })
@@ -101,8 +105,10 @@ function receiveContentFile(message) {
   .then(fileData=>{
     try {
       const fileJSON = JSON.parse(fileData);
+      if (!fileJSON.content.schedule.companyId) {throw new Error("Invalid CompanyId");}
 
-      logger.file(`Setting companyId ${JSON.stringify(fileJSON.content.schedule.companyIdd)}`);
+      logger.file(`Setting companyId ${JSON.stringify(fileJSON.content.schedule.companyId)}`);
+
       config.setCompanyId(fileJSON.content.schedule.companyId);
       return sendWatchMessagesForCredentials().then(() => watchMessagesAlreadySentForCredentials = true);
     } catch (error) {
