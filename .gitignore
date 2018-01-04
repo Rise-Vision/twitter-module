@@ -1,7 +1,6 @@
 node_modules/
 build-temp/
 src/test/test-results.xml
-src/twitter-app-credentials.js
 private-keys/
 build/
 *.zip
