@@ -6,7 +6,7 @@ const common = require("common-display-module");
 const simple = require("simple-mock");
 const platform = require("rise-common-electron").platform;
 
-const config = require("../../src/config");
+const config = require("../../src/config/config");
 const watch = require("../../src/watch");
 
 describe("Watch - Unit", ()=> {
