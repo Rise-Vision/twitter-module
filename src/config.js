@@ -1,4 +1,5 @@
 const common = require("common-display-module");
+const twitterAppCredentials = require("./twitter-app-credentials");
 
 const moduleName = "twitter";
 
@@ -22,6 +23,10 @@ function setTwitterCredentials(credentials) {
   twitterCredentials = credentials;
 }
 
+function getAppCredentials() {
+  return twitterAppCredentials;
+}
+
 module.exports = {
   bqProjectName: "client-side-events",
   bqDataset: "Module_Events",
@@ -35,5 +40,6 @@ module.exports = {
   getTwitterCredentials,
   setTwitterCredentials,
   getCompanyId,
-  setCompanyId
+  setCompanyId,
+  getAppCredentials
 };
