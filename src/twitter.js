@@ -1,7 +1,7 @@
 const logger = require("./logger");
 const {client} = require("./twitter-wrapper");
 let stream = null;
-
+console.log("Client", client);
 function closeStream() {
   return stream.destroy();
 }
