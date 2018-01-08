@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "eslint test && eslint src && mocha -r test/mocha-env.js -t 20000 --recursive --exit test/unit/** test/integration/**",
+    "test": "eslint test && eslint src && mocha -r test/mocha-env.js -t 20000 --recursive --exit test/integration/** && mocha -r test/mocha-env.js -t 20000 --recursive --exit test/unit/**",
     "test-unit": "eslint test && eslint src && mocha -r test/mocha-env.js -t 20000 --recursive --exit test/unit/**",
     "test-integration": "eslint test && eslint src && mocha -r test/mocha-env.js -t 20000 --recursive --exit test/integration/**",
     "build": "eslint src && ./pre-build.sh && webpack --env.MODULE_VERSION=$(cat version) --config webpack.config.js && ./post-build.sh"
