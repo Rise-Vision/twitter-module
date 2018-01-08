@@ -1,13 +1,58 @@
-const Twitter = require('twitter');
-const config = require("./config/config");
-const twitterCredentials = config.getTwitterCredentials();
-const options = Object.assign({}, config.getAppCredentials(), {"access_token_key": twitterCredentials.oauth_token, "access_token_secret": twitterCredentials.oauth_token_secret});
-const client = new Twitter(options);
+const logger = require("./logger");
+const {client} = require("./twitter-wrapper");
+let stream = null;
 
+function closeStream() {
+  return stream.destroy();
+}
 
-client.get('statuses/home_timeline', (error, tweets, response) => {
-  if (error) {throw error;}
-  console.log(tweets);
-  // Raw response object.
-  console.log(response);
-});
+function getTweets(screenName, callback) {
+  client.get("statuses/user_timeline", {screen_name: screenName}, (error, tweets) => {
+    if (error) {return callback(error);}
+    callback(null, tweets);
+  });
+}
+
+function streamTweets(component, callback) {
+
+  if (component.screen_name) {
+    getUserId(component.screen_name)
+    .then(userId => {callFilterApi({follow: userId}, callback)})
+    .catch(error => {
+      logger.error(error.message, `Could not retrieve user ID for ${component.screen_name}`);
+      callback(error);
+    })
+  } else if (component.hashtag) {
+    callFilterApi({track: component.hashtag}, callback);
+  }
+}
+
+function callFilterApi(params, callback) {
+  client.stream("statuses/filter", params, (newStream) => {
+    stream = newStream;
+
+    stream.on("data", (tweet) => {
+      callback(null, tweet);
+    });
+
+    stream.on("error", (error) => {
+      logger.error(error.message, `Could not stream tweets for ${JSON.stringify(params)}`);
+      callback(error);
+    });
+  });
+}
+
+function getUserId(screenName) {
+  return new Promise((resolve, reject)=>{
+    client.get("users/lookup", {screen_name: screenName}, (error, user) => {
+      if (error) {reject(error);}
+      resolve(user[0].id);
+    });
+  });
+}
+
+module.exports = {
+  streamTweets,
+  closeStream,
+  getTweets
+}

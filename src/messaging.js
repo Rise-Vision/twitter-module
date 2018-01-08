@@ -14,7 +14,7 @@ function handleTwitterWatch(message) {
     }
 
     components.addComponent(message.data.component_id, Object.assign({}, {screen_name: message.data.screen_name, hashtag: message.data.hashtag}));
-  } catch (error) {
+} catch (error) {
     logger.file(`message recieved error - ${config.moduleName} - ${error}`);
   }
 }
