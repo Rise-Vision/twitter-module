@@ -1,7 +1,7 @@
 const logger = require("./logger");
 const {client} = require("./twitter-wrapper");
 let stream = null;
-console.log("Client", client);
+
 function closeStream() {
   return stream.destroy();
 }
@@ -36,7 +36,6 @@ function callFilterApi(params, callback) {
     });
 
     stream.on("error", (error) => {
-      console.log(error);
       logger.error(error.message, `Could not stream tweets for ${JSON.stringify(params)}`);
       callback(error);
     });
@@ -46,7 +45,7 @@ function callFilterApi(params, callback) {
 function getUserId(screenName) {
   return new Promise((resolve, reject)=>{
     client.get("users/lookup", {screen_name: screenName}, (error, user) => {
-      if (error) {console.log(error); reject(error);}
+      if (error) {reject(error);}
       resolve(user[0].id);
     });
   });
