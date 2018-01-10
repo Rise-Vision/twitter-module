@@ -7,7 +7,9 @@
     "test": "test"
   },
   "scripts": {
-    "test": "eslint test && eslint src && mocha -r test/mocha-env.js -t 20000 --recursive --exit test/unit/** test/integration/**",
+    "test": "eslint test && eslint src && mocha -r test/mocha-env.js -t 20000 --recursive --exit test/integration/** && mocha -r test/mocha-env.js -t 20000 --recursive --exit test/unit/**",
+    "test-unit": "eslint test && eslint src && mocha -r test/mocha-env.js -t 20000 --recursive --exit test/unit/**",
+    "test-integration": "eslint test && eslint src && mocha -r test/mocha-env.js -t 20000 --recursive --exit test/integration/**",
     "build": "eslint src && ./pre-build.sh && webpack --env.MODULE_VERSION=$(cat version) --config webpack.config.js && ./post-build.sh"
   },
   "repository": {
@@ -38,7 +40,7 @@
     "webpack": "^3.7.1",
     "webpack-node-externals": "^1.6.0",
     "zip-webpack-plugin": "^2.0.0",
-    "local-messaging-module": "git@github.com:Rise-Vision/local-messaging-module.git#775d2"
+    "local-messaging-module": "git+https://github.com/Rise-Vision/local-messaging-module.git#775d2"
   },
   "dependencies": {
     "common-display-module": "git://github.com/Rise-Vision/common-display-module.git#v2.1.4",

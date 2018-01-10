@@ -13,6 +13,8 @@ jobs:
           key: node-cache-v2{{ checksum "package.json" }}
           paths:
             - ./node_modules
+      - run: git clone git@github.com:Rise-Vision/private-keys.git
+      - run: cp -rf ./private-keys/twitter/twitter-app-credentials.js ./src/config
       - run:
           command: npm run test
           no_output_timeout: 1m
@@ -26,7 +28,7 @@ jobs:
         - restore_cache:
             key: node-cache-v2{{ checksum "package.json" }}
         - run: git clone git@github.com:Rise-Vision/private-keys.git
-        - run: cp ./private-keys/twitter/twitter-app-credentials.js ./src
+        - run: cp -rf ./private-keys/twitter/twitter-app-credentials.js ./src/config
         - run: npm run build
         - save_cache:
             key: node-cache-v2{{ checksum "package.json" }}
