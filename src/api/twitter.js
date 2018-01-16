@@ -1,4 +1,4 @@
-const logger = require("./logger");
+const logger = require("../../src/logger");
 const {client} = require("./twitter-wrapper");
 let stream = null;
 

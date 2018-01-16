@@ -1,5 +1,5 @@
 const Twitter = require("twitter");
-const config = require("./config/config");
+const config = require("../../src/config/config");
 const twitterCredentials = config.getTwitterCredentials();
 const accessTokenKey = process.env.ACCESS_TOKEN_KEY ? process.env.ACCESS_TOKEN_KEY : twitterCredentials.oauth_token;
 const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET ? process.env.ACCESS_TOKEN_SECRET : twitterCredentials.accessTokenSecret;

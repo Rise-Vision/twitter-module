@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 /* eslint-disable max-statements, no-magic-numbers */
 const assert = require("assert");
-const twitter = require("../../src/twitter");
+const twitter = require("../../src/api/twitter");
 
 describe("Twitter - Integration", ()=> {
 

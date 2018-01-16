@@ -6,13 +6,13 @@ const logger = require("../../src/logger");
 const simple = require("simple-mock");
 const EventEmitter = require("events");
 simple.mock(config, "getTwitterCredentials").returnWith({oauth_token: "xxxxxx", oauth_token_secret: "xxxxxxxxxxx"});
-const twitterWrapper = require("../../src/twitter-wrapper");
+const twitterWrapper = require("../../src/api/twitter-wrapper");
 const clientMock = {
   get: () => {},
   stream: () => {}
 }
 simple.mock(twitterWrapper, "client", clientMock)
-const twitter = require("../../src/twitter");
+const twitter = require("../../src/api/twitter");
 
 describe("Twitter - Unit", ()=> {
 
