@@ -4,9 +4,9 @@ const commonConfig = require("common-display-module");
 const simple = require("simple-mock");
 const mock = simple.mock;
 const assert = require("assert");
-const messaging = require("../../src/messaging");
-const components = require("../../src/components");
-const logger = require("../../src/logger");
+const messaging = require("../../../src/messaging/messaging");
+const components = require("../../../src/components");
+const logger = require("../../../src/logger");
 const localMessagingModule = require("local-messaging-module");
 
 let testComponentId = {};

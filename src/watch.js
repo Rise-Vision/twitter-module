@@ -4,6 +4,7 @@ const common = require("common-display-module");
 const config = require("./config/config");
 const logger = require("./logger");
 const platform = require("rise-common-electron").platform;
+const broadcastIPC = require("./messaging/broadcast-ipc.js");
 
 // So we ensure it will only be sent once.
 let watchMessagesAlreadySentForContent = false;
@@ -37,11 +38,7 @@ function sendWatchMessagesForCredentials() {
   if (!watchMessagesAlreadySentForCredentials) {
     const filePath = `risevision-company-notifications/${config.getCompanyId()}/credentials/twitter.json`;
 
-    common.broadcastMessage({
-      from: config.moduleName,
-      topic: "watch",
-      filePath
-    });
+    broadcastIPC.broadcast("watch", {filePath});
   }
 
   return Promise.resolve();
@@ -53,11 +50,7 @@ function sendWatchMessagesForContentFile() {
     {
       const filePath = `risevision-display-notifications/${displayId}/content.json`;
 
-      common.broadcastMessage({
-        from: config.moduleName,
-        topic: "watch",
-        filePath
-      });
+      broadcastIPC.broadcast("watch", {filePath});
     });
 }
 

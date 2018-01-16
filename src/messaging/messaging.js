@@ -1,9 +1,9 @@
-const commonConfig = require("common-display-module");
-const config = require("./config/config");
-const watch = require("./watch");
 const companyConfigBucket = "risevision-company-notifications";
-const logger = require("./logger");
-const components = require("./components");
+const commonConfig = require("common-display-module");
+const config = require("../../src/config/config");
+const watch = require("../../src/watch");
+const logger = require("../../src/logger");
+const components = require("../../src/components");
 
 function handleTwitterWatch(message) {
   try {

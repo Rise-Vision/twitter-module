@@ -1,7 +1,7 @@
 const commonConfig = require("common-display-module");
 const config = require("./config/config");
 const logger = require("./logger");
-const messaging = require("./messaging");
+const messaging = require("./messaging/messaging");
 
 messaging.init()
   .then(()=>{
