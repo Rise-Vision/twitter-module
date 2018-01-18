@@ -8,7 +8,7 @@ const broadcastIPC = require("../../../src/messaging/broadcast-ipc.js");
 const config = require("../../../src/config/config");
 const logger = require("../../../src/logger");
 
-describe("Broadcast IPC", ()=> {
+describe("Messaging -> Broadcast IPC", ()=> {
   beforeEach(()=>{
     mock(commonConfig, "broadcastMessage").returnWith();
     mock(broadcastIPC, "broadcast");
@@ -31,13 +31,17 @@ describe("Broadcast IPC", ()=> {
     });
   });
 
+  it("throws error if TWITTER-UPDATE with invalid status", ()=>{
+    assert.throws(() => {broadcastIPC.twitterUpdate({"status": "", "data": JSON.stringify({"test-property": "testValue"})})}, Error);
+  });
+
   it("broadcasts TWITTER-UPDATE message", ()=>{
     broadcastIPC.twitterUpdate({"status": "CACHED", "data": JSON.stringify({"test-property": "testValue"})});
     assert(broadcastIPC.twitterUpdate.called);
     assert(commonConfig.broadcastMessage.called);
     assert.deepEqual(commonConfig.broadcastMessage.lastCall.args[0], {
       from: config.moduleName,
-      topic: "TWITTER-UPDATE",
+      topic: "twitter-update",
       status: "CACHED",
       data: '{"test-property":"testValue"}'
     });

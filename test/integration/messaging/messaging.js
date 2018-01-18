@@ -1,11 +1,16 @@
 /* eslint-env mocha */
+/* eslint-disable no-magic-numbers, max-statements */
 
 const commonConfig = require("common-display-module");
 const simple = require("simple-mock");
 const mock = simple.mock;
 const assert = require("assert");
 const messaging = require("../../../src/messaging/messaging");
-const components = require("../../../src/components");
+const watch = require("../../../src/messaging/watch/watch");
+const twitter = require("../../../src/api/twitter");
+const components = require("../../../src/components/components");
+const componentsController = require("../../../src/components/components-controller");
+const update = require("../../../src/messaging/update/update");
 const logger = require("../../../src/logger");
 const localMessagingModule = require("local-messaging-module");
 
@@ -22,8 +27,13 @@ describe("Messaging - Integration", function() {
     beforeEach(() => {
       messaging.init();
 
-      mock(components, "addComponent");
+      mock(logger, "error");
       mock(logger, "file");
+      mock(update, "processAll");
+      mock(components, "addComponent");
+      mock(components, "removeComponent");
+      mock(twitter, "closeStream");
+      mock(componentsController, "updateComponent");
 
       mock(commonConfig, "getDisplaySettingsSync").returnWith({
         displayid: "ls-test-id", displayId: "ls-test-id"
@@ -39,74 +49,144 @@ describe("Messaging - Integration", function() {
     });
 
     afterEach(() => {
+      twitter.closeAllStreams();
       commonConfig.disconnect();
       simple.restore();
       components.clear();
     });
 
-    it("does not add twitter component if neither component_id is invalid", () => {
+    it("does not update twitter component if component_id is invalid", () => {
       testComponentId = {};
       testComponent = Object.assign({}, testComponentId, testComponentData);
 
       return new Promise(res => {
         commonConfig.receiveMessages("test")
           .then(receiver => receiver.on("message", (message) => {
-            if (message.topic === "Twitter-Watch") {
+            if (message.topic.toUpperCase() === "TWITTER-WATCH") {
               // should not add component
               assert.equal(components.addComponent.callCount, 0);
-              assert.equal(logger.file.lastCall.args, "message recieved error - twitter - Error: component_id is invalid");
+              assert(logger.file.lastCall.args[0].startsWith("TWITTER-WATCH - UPDATE error"));
               res();
             }
           }));
 
         commonConfig.broadcastMessage({
           from: "test",
-          topic: "Twitter-Watch",
+          topic: "twitter-watch",
+          status: "CURRENT",
           data: testComponent
         });
       });
     });
 
-    it("does not add twitter component if neither hashtag nor screen_name is valid", () => {
+    it("does not update twitter component if neither hashtag nor screen_name is valid", () => {
       testComponentData = {};
       testComponent = Object.assign({}, testComponentId, testComponentData);
 
       return new Promise(res => {
         commonConfig.receiveMessages("test")
           .then(receiver => receiver.on("message", (message) => {
-            if (message.topic === "Twitter-Watch") {
+            if (message.topic.toUpperCase() === "TWITTER-WATCH") {
               // should not add component
               assert.equal(components.addComponent.callCount, 0);
-              assert.equal(logger.file.lastCall.args, "message recieved error - twitter - Error: must include screen_name or hashtag");
+              assert(logger.file.lastCall.args[0].startsWith("TWITTER-WATCH - UPDATE error in"));
               res();
             }
           }));
 
         commonConfig.broadcastMessage({
           from: "test",
-          topic: "Twitter-Watch",
+          topic: "twitter-watch",
+          status: "CURRENT",
           data: testComponent
         });
       });
     });
 
-    it("waits for twitter component message then adds component to watch", () => {
+    it("does not update twitter component if credentials do not exist", () => {
+      mock(twitter, "credentialsExist").returnWith(false);
+
       return new Promise(res => {
         commonConfig.broadcastMessage({
           from: "test",
-          topic: "Twitter-Watch",
+          topic: "twitter-watch",
+          status: "CURRENT",
+          data: testComponent
+        });
+
+        setTimeout(function() {
+          assert.equal(logger.file.lastCall.args[0], "Credentials do not exist - can not update components");
+          res();
+        }, 200);
+      });
+    });
+
+    it("waits for twitter component then adds component to watch => sends update message with tweets", () => {
+      testComponentData = {screen_name: "risevision", hashtag: "testtag"};
+      testComponent = Object.assign({}, testComponentId, testComponentData);
+
+      return new Promise(res => {
+        commonConfig.broadcastMessage({
+          from: "test",
+          topic: "twitter-watch",
+          status: "CURRENT",
           data: testComponent
         });
 
         commonConfig.receiveMessages("test")
           .then(receiver => receiver.on("message", (message) => {
-            if (message.topic === "Twitter-Watch") {
-              // should add component
+            if (message.topic.toUpperCase() === "TWITTER-UPDATE") {
               assert.equal(components.addComponent.callCount, 1);
-              assert.equal(JSON.stringify(components.getComponentById(testComponentId.component_id)), JSON.stringify(testComponentData));
+              assert.equal(JSON.stringify(components.getComponentDataById(testComponentId.component_id)), JSON.stringify(testComponentData));
+              assert.equal(message.status.toUpperCase(), "CURRENT");
+              assert(message.data)
               res();
             }
           }));
+      });
+    });
+
+    it("updates all twitter components if credentials JSON file is changed", () => {
+      mock(watch, "receiveCredentialsFile").returnWith(Promise.resolve());
+      mock(components, "getComponents").returnWith({"risevision": {"screen_name": "risevision", "hashtag": "testtag"}});
+
+      return new Promise(res => {
+        commonConfig.receiveMessages("test")
+          .then(receiver => receiver.on("message", (message) => {
+            if (message.topic.toUpperCase() === "TWITTER-UPDATE") {
+              assert.equal(message.status.toUpperCase(), "CURRENT");
+              assert(message.data);
+              assert.equal(update.processAll.callCount, 1);
+              res();
+            }
+          }));
+
+        commonConfig.broadcastMessage({
+          from: "test",
+          topic: "file-update",
+          status: "CURRENT",
+          filePath: "risevision-company-notifications/testing/twitter.json"
+        });
+      });
+    });
+
+    it("does not update twitter components if credentials JSON file is deleted or does not exist", () => {
+      mock(watch, "receiveCredentialsFile").returnWith(Promise.resolve());
+      mock(twitter, "credentialsExist").returnWith(false);
+      mock(components, "getComponents").returnWith({"risevision": {"screen_name": "risevision", "hashtag": "testtag"}});
+
+      return new Promise(res => {
+        commonConfig.broadcastMessage({
+          from: "test",
+          topic: "file-update",
+          status: "DELETED",
+          filePath: "risevision-company-notifications/testing/twitter.json"
+        });
+
+        setTimeout(function() {
+          assert.equal(logger.file.lastCall.args[0], "Credentials do not exist - can not update components");
+          res();
+        }, 1000);
       });
     });
 

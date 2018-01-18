@@ -4,7 +4,7 @@ const assert = require("assert");
 const common = require("common-display-module");
 const simple = require("simple-mock");
 
-const watch = require("../../src/watch");
+const watch = require("../../../../src/messaging/watch/watch");
 
 describe("Watch - Integration", ()=>
 {
@@ -86,7 +86,7 @@ describe("Watch - Integration", ()=>
     simple.mock(common, "receiveMessages").resolveWith(new Receiver());
 
     // deferred require after mocks are set up
-    require("../../src/index");
+    require("../../../../src/index");
   });
 
 });

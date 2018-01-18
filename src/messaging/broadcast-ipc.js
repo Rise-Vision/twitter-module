@@ -13,7 +13,7 @@ function twitterUpdate(data = {}) {
   logger.file(`Broadcasting ${data.status} TWITTER-UPDATE`);
 
   const messageObject = Object.assign({}, data);
-  broadcast("TWITTER-UPDATE", messageObject)
+  broadcast("twitter-update", messageObject)
 }
 
 module.exports = {

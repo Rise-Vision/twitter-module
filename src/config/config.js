@@ -27,6 +27,8 @@ function getAppCredentials() {
 }
 
 module.exports = {
+  secondMillis: 1000,
+  defaultComponentUpdateIntervalSeconds: 60,
   moduleName: MODULE_NAME,
   bqProjectName: "client-side-events",
   bqDataset: "Module_Events",
