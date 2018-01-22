@@ -1,10 +1,10 @@
 /* eslint-disable line-comment-position, no-inline-comments */
 
 const common = require("common-display-module");
-const config = require("./config/config");
-const logger = require("./logger");
+const config = require("../../../src/config/config");
+const logger = require("../../../src/logger");
 const platform = require("rise-common-electron").platform;
-const broadcastIPC = require("./messaging/broadcast-ipc.js");
+const broadcastIPC = require("../../../src/messaging/broadcast-ipc.js");
 
 // So we ensure it will only be sent once.
 let watchMessagesAlreadySentForContent = false;

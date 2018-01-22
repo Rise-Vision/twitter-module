@@ -4,7 +4,7 @@ function getComponents() {
   return components;
 }
 
-function getComponentById(componentId) {
+function getComponentDataById(componentId) {
   if (Reflect.has(components, componentId)) {
     return components[componentId];
   }
@@ -25,7 +25,7 @@ function clear() {
 
 module.exports = {
   getComponents,
-  getComponentById,
+  getComponentDataById,
   addComponent,
   removeComponent,
   clear

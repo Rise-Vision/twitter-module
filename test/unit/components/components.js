@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 const assert = require("assert");
 const simple = require("simple-mock");
-const components = require("../../src/components");
+const components = require("../../../src/components/components");
 
 describe("Components - Unit", ()=>
 {
@@ -18,7 +18,7 @@ describe("Components - Unit", ()=>
     const testComponentId = "test_component_id";
     const testComponentData = {screen_name: "test_screen_name", hashtag: "test"}
     components.addComponent(testComponentId, testComponentData);
-    assert.equal(JSON.stringify(components.getComponentById(testComponentId)), JSON.stringify(testComponentData));
+    assert.equal(JSON.stringify(components.getComponentDataById(testComponentId)), JSON.stringify(testComponentData));
     done();
   });
 
@@ -26,7 +26,7 @@ describe("Components - Unit", ()=>
   {
     const testComponentId = "test_component_id";
     components.removeComponent(testComponentId);
-    assert.equal(components.getComponentById(testComponentId), null);
+    assert.equal(components.getComponentDataById(testComponentId), null);
     done();
   });
 

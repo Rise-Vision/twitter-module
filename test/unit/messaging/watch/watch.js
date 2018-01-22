@@ -1,15 +1,15 @@
 /* eslint-env mocha */
 /* eslint-disable max-statements, no-magic-numbers */
 const assert = require("assert");
-const logger = require("../../src/logger");
+const logger = require("../../../../src/logger");
 const common = require("common-display-module");
 const simple = require("simple-mock");
 const platform = require("rise-common-electron").platform;
 
-const config = require("../../src/config/config");
-const watch = require("../../src/watch");
+const config = require("../../../../src/config/config");
+const watch = require("../../../../src/messaging/watch/watch");
 
-describe("Watch - Unit", ()=> {
+describe("Messaging -> Watch - Unit", ()=> {
 
   beforeEach(()=> {
     const settings = {displayid: "DIS123"};

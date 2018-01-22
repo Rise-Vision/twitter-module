@@ -1,18 +1,18 @@
 /* eslint-env mocha */
 /* eslint-disable max-statements, no-magic-numbers */
 const assert = require("assert");
-const config = require("../../src/config/config");
-const logger = require("../../src/logger");
+const config = require("../../../src/config/config");
+const logger = require("../../../src/logger");
 const simple = require("simple-mock");
 const EventEmitter = require("events");
 simple.mock(config, "getTwitterCredentials").returnWith({oauth_token: "xxxxxx", oauth_token_secret: "xxxxxxxxxxx"});
-const twitterWrapper = require("../../src/api/twitter-wrapper");
+const twitterWrapper = require("../../../src/api/twitter-wrapper");
 const clientMock = {
   get: () => {},
   stream: () => {}
 }
 simple.mock(twitterWrapper, "client", clientMock)
-const twitter = require("../../src/api/twitter");
+const twitter = require("../../../src/api/twitter");
 
 describe("Twitter - Unit", ()=> {
 
@@ -25,11 +25,12 @@ describe("Twitter - Unit", ()=> {
   });
 
   afterEach(()=> {
-    simple.restore()
+    simple.restore();
+    twitter.closeAllStreams();
   });
 
   it("should return tweets for screen name", done => {
-    twitter.streamTweets({screen_name: "test"}, (error, tweets)=>{
+    twitter.streamTweets("test-component-id", {screen_name: "test"}, (error, tweets)=>{
       assert(tweets);
       assert.deepEqual(clientMock.stream.lastCall.args[1], {follow: 1234})
       assert.equal(clientMock.stream.lastCall.args[0], "statuses/filter")
@@ -42,7 +43,7 @@ describe("Twitter - Unit", ()=> {
   });
 
   it("should return tweets for hashtag", done => {
-    twitter.streamTweets({hashtag: "#test"}, (error, tweets)=>{
+    twitter.streamTweets("test-component-id", {hashtag: "#test"}, (error, tweets)=>{
       assert(tweets);
       assert(clientMock.stream.lastCall.arg[1], {track: "#test"})
       assert(clientMock.stream.lastCall.arg[0], "statuses/filter")
@@ -52,7 +53,7 @@ describe("Twitter - Unit", ()=> {
   });
 
   it("should fail if stream returns error", done => {
-    twitter.streamTweets({screen_name: "test"}, (error)=>{
+    twitter.streamTweets("test-component-id", {screen_name: "test"}, (error)=>{
       assert.equal(error.message, "Error on stream");
       assert(logger.error.lastCall.args[1].includes("Could not stream tweets for"));
       done();
@@ -64,7 +65,7 @@ describe("Twitter - Unit", ()=> {
 
   it("should fail if cannot get user id", done => {
     simple.mock(clientMock, "get").callbackWith(new Error("Cannot get User ID"));
-    twitter.streamTweets({screen_name: "test"}, (error)=>{
+    twitter.streamTweets("test-component-id", {screen_name: "test"}, (error)=>{
       assert.equal(error.message, "Cannot get User ID");
       assert(logger.error.lastCall.args[1].includes("Could not retrieve user ID for"));
       done();
