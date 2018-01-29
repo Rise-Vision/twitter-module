@@ -13,6 +13,7 @@ const componentsController = require("../../../src/components/components-control
 const update = require("../../../src/messaging/update/update");
 const logger = require("../../../src/logger");
 const localMessagingModule = require("local-messaging-module");
+const broadcastIPC = require("../../../src/messaging/broadcast-ipc");
 
 let testComponentId = {};
 let testComponentData = {};
@@ -34,6 +35,7 @@ describe("Messaging - Integration", function() {
       mock(components, "removeComponent");
       mock(twitter, "closeStream");
       mock(componentsController, "updateComponent");
+      mock(broadcastIPC, "twitterUpdate");
 
       mock(commonConfig, "getDisplaySettingsSync").returnWith({
         displayid: "ls-test-id", displayId: "ls-test-id"
@@ -133,16 +135,12 @@ describe("Messaging - Integration", function() {
           data: testComponent
         });
 
-        commonConfig.receiveMessages("test")
-          .then(receiver => receiver.on("message", (message) => {
-            if (message.topic.toUpperCase() === "TWITTER-UPDATE") {
-              assert.equal(components.addComponent.callCount, 1);
-              assert.equal(JSON.stringify(components.getComponentDataById(testComponentId.component_id)), JSON.stringify(testComponentData));
-              assert.equal(message.status.toUpperCase(), "CURRENT");
-              assert(message.data)
-              res();
-            }
-          }));
+        setTimeout(()=>{
+          assert.equal(components.addComponent.callCount, 1);
+          assert.equal(JSON.stringify(components.getComponentDataById(testComponentId.component_id)), JSON.stringify(testComponentData));
+          assert.equal(broadcastIPC.twitterUpdate.callCount, 1);
+          res();
+        }, 3000);
       });
     });
 
@@ -151,22 +149,18 @@ describe("Messaging - Integration", function() {
       mock(components, "getComponents").returnWith({"risevision": {"screen_name": "risevision", "hashtag": "testtag"}});
 
       return new Promise(res => {
-        commonConfig.receiveMessages("test")
-          .then(receiver => receiver.on("message", (message) => {
-            if (message.topic.toUpperCase() === "TWITTER-UPDATE") {
-              assert.equal(message.status.toUpperCase(), "CURRENT");
-              assert(message.data);
-              assert.equal(update.processAll.callCount, 1);
-              res();
-            }
-          }));
-
         commonConfig.broadcastMessage({
           from: "test",
           topic: "file-update",
           status: "CURRENT",
           filePath: "risevision-company-notifications/testing/twitter.json"
         });
+
+        setTimeout(()=>{
+          assert.equal(update.processAll.callCount, 1);
+          assert.equal(broadcastIPC.twitterUpdate.callCount, 1);
+          res();
+        }, 3000);
       });
     });
 
