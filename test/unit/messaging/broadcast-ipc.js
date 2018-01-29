@@ -42,6 +42,7 @@ describe("Messaging -> Broadcast IPC", ()=> {
     assert.deepEqual(commonConfig.broadcastMessage.lastCall.args[0], {
       from: config.moduleName,
       topic: "twitter-update",
+      through: 'ws',
       status: "CACHED",
       data: '{"test-property":"testValue"}'
     });

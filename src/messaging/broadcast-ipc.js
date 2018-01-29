@@ -12,8 +12,8 @@ function twitterUpdate(data = {}) {
   if (!data.status) {throw new Error("broadcast - TWITTER-UPDATE - status is invalid");}
   logger.file(`Broadcasting ${data.status} TWITTER-UPDATE`);
 
-  const messageObject = Object.assign({}, data);
-  broadcast("twitter-update", messageObject)
+  const messageObject = Object.assign({}, {through: 'ws'}, data);
+  broadcast("twitter-update", messageObject);
 }
 
 module.exports = {
