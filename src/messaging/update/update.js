@@ -23,5 +23,8 @@ module.exports = {
   },
   processAll() {
     componentsController.updateAllComponents();
+  },
+  clear() {
+    componentsController.clearComponents();
   }
 };

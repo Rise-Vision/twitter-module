@@ -54,4 +54,12 @@ describe("Components-Controller - Unit", ()=>
     assert(twitter.getTweets.called);
     done();
   });
+
+  it("should clear components", done =>
+  {
+    mock(components, "clear");
+    componentsController.clearComponents();
+    assert(components.clear.called);
+    done();
+  });
 });

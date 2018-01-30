@@ -34,7 +34,7 @@ function updateAllComponents() {
 
   if (!twitter.credentialsExist()) {return logger.file("Credentials do not exist - can not update components");}
 
-  twitter.closeStream();
+  twitter.closeAllStreams();
 
   const componentsList = components.getComponents();
 
@@ -43,7 +43,12 @@ function updateAllComponents() {
   }
 }
 
+function clearComponents() {
+  components.clear();
+}
+
 module.exports = {
   updateComponent,
-  updateAllComponents
+  updateAllComponents,
+  clearComponents
 }

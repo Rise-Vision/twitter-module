@@ -31,6 +31,7 @@ describe("Messaging - Integration", function() {
       mock(logger, "error");
       mock(logger, "file");
       mock(update, "processAll");
+      mock(update, "clear");
       mock(components, "addComponent");
       mock(components, "removeComponent");
       mock(twitter, "closeStream");
@@ -181,6 +182,21 @@ describe("Messaging - Integration", function() {
           assert.equal(logger.file.lastCall.args[0], "Credentials do not exist - can not update components");
           res();
         }, 1000);
+      });
+    });
+
+    it("clear all twitter components if ws-client-connected message is received", () => {
+
+      return new Promise(res => {
+        commonConfig.broadcastMessage({
+          from: "ws-client",
+          topic: "ws-client-connected"
+        });
+
+        setTimeout(()=>{
+          assert.equal(update.clear.callCount, 1);
+          res();
+        }, 3000);
       });
     });
 
