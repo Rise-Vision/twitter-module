@@ -14,6 +14,7 @@ describe("Components-Controller - Unit", ()=>
     mock(twitter, "credentialsExist").returnWith(true);
 
     mock(twitter, "getTweets");
+    mock(twitter, "closeAllStreams");
     mock(broadcastIPC, "twitterUpdate");
     mock(logger, "file").returnWith();
   });
@@ -52,6 +53,15 @@ describe("Components-Controller - Unit", ()=>
     const testComponentData = {screen_name: "RiseVision", hashtag: "risevision"}
     componentsController.updateComponent(testComponentId, testComponentData);
     assert(twitter.getTweets.called);
+    done();
+  });
+
+  it("should clear components", done =>
+  {
+    mock(components, "clear");
+    componentsController.clearComponents();
+    assert(twitter.closeAllStreams.called);
+    assert(components.clear.called);
     done();
   });
 });

@@ -9,6 +9,10 @@ function handleComponent(message) {
   return update.process(message);
 }
 
+function handleWSClientConnected() {
+  return update.clear();
+}
+
 function handleFileUpdate(message) {
   if (!message.filePath || !message.filePath.startsWith(companyConfigBucket)) {
     return;
@@ -30,6 +34,8 @@ function messageReceiveHandler(message) {
       return handleFileUpdate(message);
     case "TWITTER-WATCH":
       return handleComponent(message);
+    case "WS-CLIENT-CONNECTED":
+      return handleWSClientConnected(message);
     default:
       logger.debug(`message recieved error - ${config.moduleName} - unrecognized message topic: ${message.topic}`);
   }
