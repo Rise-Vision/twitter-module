@@ -44,6 +44,7 @@ function updateAllComponents() {
 }
 
 function clearComponents() {
+  twitter.closeAllStreams();
   components.clear();
 }
 

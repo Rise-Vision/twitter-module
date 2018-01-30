@@ -14,6 +14,7 @@ describe("Components-Controller - Unit", ()=>
     mock(twitter, "credentialsExist").returnWith(true);
 
     mock(twitter, "getTweets");
+    mock(twitter, "closeAllStreams");
     mock(broadcastIPC, "twitterUpdate");
     mock(logger, "file").returnWith();
   });
@@ -59,6 +60,7 @@ describe("Components-Controller - Unit", ()=>
   {
     mock(components, "clear");
     componentsController.clearComponents();
+    assert(twitter.closeAllStreams.called);
     assert(components.clear.called);
     done();
   });
