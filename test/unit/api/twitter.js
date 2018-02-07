@@ -63,10 +63,12 @@ describe("Twitter - Unit", ()=> {
     }, 100);
   });
 
-  it("should fail if cannot get user id", done => {
-    simple.mock(clientMock, "get").callbackWith(new Error("Cannot get User ID"));
+  it("should fail if cannot get user id for stream", done => {
+    const expectedError = [{"code": 17, "message": "No user matches for specified terms."}];
+
+    simple.mock(clientMock, "get").callbackWith(expectedError, "");
     twitter.streamTweets("test-component-id", {screen_name: "test"}, (error)=>{
-      assert.equal(error.message, "Cannot get User ID");
+      assert.equal(error, JSON.stringify(expectedError));
       assert(logger.error.lastCall.args[1].includes("Could not retrieve user ID for"));
       done();
     });
@@ -81,7 +83,7 @@ describe("Twitter - Unit", ()=> {
     });
   });
 
-  it("should fail it getting tweets returns an error", done => {
+  it("should fail if getting tweets returns an error", done => {
     simple.mock(clientMock, "get").callbackWith(new Error("Error on getting Tweets"));
     twitter.getTweets("test", (error) => {
       assert.deepEqual(error.message, "Error on getting Tweets");

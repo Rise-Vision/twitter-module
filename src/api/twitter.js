@@ -41,9 +41,9 @@ function getTweets(screenName, callback) {
 function streamTweets(componentId, componentData, callback) {
   if (componentData.screen_name) {
     getUserId(componentData.screen_name)
-    .then(userId => {callFilterApi(componentId, {follow: userId}, callback)})
+    .then(userId => {callFilterApi(componentId, {follow: userId}, callback);})
     .catch(error => {
-      logger.error(error.message, `Could not retrieve user ID for ${componentData.screen_name}`);
+      logger.error(error, `Could not retrieve user ID for ${componentData.screen_name}`);
       callback(error);
     })
   } else if (componentData.hashtag) {
@@ -60,7 +60,7 @@ function callFilterApi(componentId, params, callback) {
     });
 
     stream.on("error", (error) => {
-      logger.error(error.message, `Could not stream tweets for ${JSON.stringify(params)}`);
+      logger.error(error, `Could not stream tweets for ${JSON.stringify(params)}`);
       callback(error);
     });
   });
@@ -69,8 +69,12 @@ function callFilterApi(componentId, params, callback) {
 function getUserId(screenName) {
   return new Promise((resolve, reject)=>{
     client.get("users/lookup", {screen_name: screenName}, (error, user) => {
-      if (error) {reject(error);}
-      resolve(user[0].id);
+      if (error) {
+        reject(JSON.stringify(error));
+      }
+      if (user[0]) {
+        resolve(user[0].id_str || user[0].id);
+      }
     });
   });
 }
