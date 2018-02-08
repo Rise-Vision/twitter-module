@@ -3,6 +3,7 @@
 const assert = require("assert");
 const logger = require("../../../../src/logger");
 const common = require("common-display-module");
+const commonMessaging = require("common-display-module/messaging");
 const simple = require("simple-mock");
 const platform = require("rise-common-electron").platform;
 
@@ -14,7 +15,7 @@ describe("Messaging -> Watch - Unit", ()=> {
   beforeEach(()=> {
     const settings = {displayid: "DIS123"};
 
-    simple.mock(common, "broadcastMessage").returnWith();
+    simple.mock(commonMessaging, "broadcastMessage").returnWith();
     simple.mock(logger, "error").returnWith();
     simple.mock(common, "getDisplaySettings").resolveWith(settings);
   });
@@ -29,7 +30,7 @@ describe("Messaging -> Watch - Unit", ()=> {
     watch.checkIfLocalStorageIsAvailable({clients: []})
     .then(() => {
       // no clients, so WATCH messages shouldn't have been sent
-      assert(!common.broadcastMessage.called);
+      assert(!commonMessaging.broadcastMessage.called);
 
       done();
     })
@@ -46,7 +47,7 @@ describe("Messaging -> Watch - Unit", ()=> {
     })
     .then(() => {
       // so WATCH messages shouldn't have been sent
-      assert(!common.broadcastMessage.called);
+      assert(!commonMessaging.broadcastMessage.called);
 
       done();
     })
@@ -63,12 +64,12 @@ describe("Messaging -> Watch - Unit", ()=> {
     })
     .then(() => {
       // so WATCH messages should have been sent for content.json file
-      assert(common.broadcastMessage.called);
-      assert.equal(1, common.broadcastMessage.callCount);
+      assert(commonMessaging.broadcastMessage.called);
+      assert.equal(1, commonMessaging.broadcastMessage.callCount);
 
       {
         // this is the request for content.json
-        const event = common.broadcastMessage.calls[0].args[0];
+        const event = commonMessaging.broadcastMessage.calls[0].args[0];
 
         assert(event);
         // check we sent it
@@ -156,11 +157,11 @@ describe("Messaging -> Watch - Unit", ()=> {
     .then(() => {
       assert.equal(config.getCompanyId(), "companyXXXXXX");
 
-      assert(common.broadcastMessage.called);
-      assert.equal(1, common.broadcastMessage.callCount);
+      assert(commonMessaging.broadcastMessage.called);
+      assert.equal(1, commonMessaging.broadcastMessage.callCount);
 
       // this is the request for content.json
-      const event = common.broadcastMessage.calls[0].args[0];
+      const event = commonMessaging.broadcastMessage.calls[0].args[0];
 
       assert(event);
       // check we sent it
