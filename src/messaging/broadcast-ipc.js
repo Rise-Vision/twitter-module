@@ -1,11 +1,20 @@
-const commonConfig = require("common-display-module");
+const commonMessaging = require("common-display-module/messaging");
 const config = require("../../src/config/config");
 const logger = require("../../src/logger");
 
 function broadcast(topic, data = {}) {
   const message = Object.assign({}, {"from": config.moduleName, topic}, data);
 
-  commonConfig.broadcastMessage(message);
+  commonMessaging.broadcastMessage(message);
+}
+
+function licensingUpdate(isAuthorized, userFriendlyStatus, data = {}) {
+  if (isAuthorized === null || !userFriendlyStatus) {throw new Error("broadcast - LICENSING-UPDATE - authorized status is invalid");}
+  logger.file(`Broadcasting ${data.status} LICENSING-UPDATE`);
+
+  const messageData = Object.assign({}, {'is_authorized': isAuthorized, 'user_friendly_status': userFriendlyStatus}, data);
+  const messageObject = Object.assign({}, {through: 'ws'}, {data: messageData});
+  broadcast("licensing-update", messageObject);
 }
 
 function twitterUpdate(data = {}) {
@@ -18,5 +27,6 @@ function twitterUpdate(data = {}) {
 
 module.exports = {
   broadcast,
+  licensingUpdate,
   twitterUpdate
 }

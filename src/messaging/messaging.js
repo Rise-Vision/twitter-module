@@ -1,9 +1,10 @@
 const companyConfigBucket = "risevision-company-notifications";
-const commonConfig = require("common-display-module");
+const commonMessaging = require("common-display-module/messaging");
 const config = require("../../src/config/config");
 const watch = require("./watch/watch");
 const update = require("./update/update");
 const logger = require("../../src/logger");
+const licensing = require("../../src/licensing");
 
 function handleComponent(message) {
   return update.process(message);
@@ -30,6 +31,8 @@ function messageReceiveHandler(message) {
   switch (message.topic.toUpperCase()) {
     case "CLIENT-LIST":
       return watch.checkIfLocalStorageIsAvailable(message);
+    case "LICENSING-UPDATE":
+          return licensing.updateLicensingData(message);
     case "FILE-UPDATE":
       return handleFileUpdate(message);
     case "TWITTER-WATCH":
@@ -43,7 +46,7 @@ function messageReceiveHandler(message) {
 
 module.exports = {
   init() {
-    commonConfig.receiveMessages(config.moduleName).then((receiver) => {
+    commonMessaging.receiveMessages(config.moduleName).then((receiver) => {
       receiver.on("message", messageReceiveHandler);
     });
     return Promise.resolve();

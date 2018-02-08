@@ -2,6 +2,7 @@
 /* eslint-disable no-magic-numbers, max-statements */
 
 const commonConfig = require("common-display-module");
+const commonMessaging = require("common-display-module/messaging");
 const simple = require("simple-mock");
 const mock = simple.mock;
 const assert = require("assert");
@@ -53,7 +54,7 @@ describe("Messaging - Integration", function() {
 
     afterEach(() => {
       twitter.closeAllStreams();
-      commonConfig.disconnect();
+      commonMessaging.disconnect();
       simple.restore();
       components.clear();
     });
@@ -63,7 +64,7 @@ describe("Messaging - Integration", function() {
       testComponent = Object.assign({}, testComponentId, testComponentData);
 
       return new Promise(res => {
-        commonConfig.receiveMessages("test")
+        commonMessaging.receiveMessages("test")
           .then(receiver => receiver.on("message", (message) => {
             if (message.topic.toUpperCase() === "TWITTER-WATCH") {
               // should not add component
@@ -73,7 +74,7 @@ describe("Messaging - Integration", function() {
             }
           }));
 
-        commonConfig.broadcastMessage({
+        commonMessaging.broadcastMessage({
           from: "test",
           topic: "twitter-watch",
           status: "CURRENT",
@@ -87,7 +88,7 @@ describe("Messaging - Integration", function() {
       testComponent = Object.assign({}, testComponentId, testComponentData);
 
       return new Promise(res => {
-        commonConfig.receiveMessages("test")
+        commonMessaging.receiveMessages("test")
           .then(receiver => receiver.on("message", (message) => {
             if (message.topic.toUpperCase() === "TWITTER-WATCH") {
               // should not add component
@@ -97,7 +98,7 @@ describe("Messaging - Integration", function() {
             }
           }));
 
-        commonConfig.broadcastMessage({
+        commonMessaging.broadcastMessage({
           from: "test",
           topic: "twitter-watch",
           status: "CURRENT",
@@ -110,7 +111,7 @@ describe("Messaging - Integration", function() {
       mock(twitter, "credentialsExist").returnWith(false);
 
       return new Promise(res => {
-        commonConfig.broadcastMessage({
+        commonMessaging.broadcastMessage({
           from: "test",
           topic: "twitter-watch",
           status: "CURRENT",
@@ -129,7 +130,7 @@ describe("Messaging - Integration", function() {
       testComponent = Object.assign({}, testComponentId, testComponentData);
 
       return new Promise(res => {
-        commonConfig.broadcastMessage({
+        commonMessaging.broadcastMessage({
           from: "test",
           topic: "twitter-watch",
           status: "CURRENT",
@@ -150,7 +151,7 @@ describe("Messaging - Integration", function() {
       mock(components, "getComponents").returnWith({"risevision": {"screen_name": "risevision", "hashtag": "testtag"}});
 
       return new Promise(res => {
-        commonConfig.broadcastMessage({
+        commonMessaging.broadcastMessage({
           from: "test",
           topic: "file-update",
           status: "CURRENT",
@@ -171,7 +172,7 @@ describe("Messaging - Integration", function() {
       mock(components, "getComponents").returnWith({"risevision": {"screen_name": "risevision", "hashtag": "testtag"}});
 
       return new Promise(res => {
-        commonConfig.broadcastMessage({
+        commonMessaging.broadcastMessage({
           from: "test",
           topic: "file-update",
           status: "DELETED",
@@ -188,7 +189,7 @@ describe("Messaging - Integration", function() {
     it("clear all twitter components if ws-client-connected message is received", () => {
 
       return new Promise(res => {
-        commonConfig.broadcastMessage({
+        commonMessaging.broadcastMessage({
           from: "ws-client",
           topic: "ws-client-connected"
         });

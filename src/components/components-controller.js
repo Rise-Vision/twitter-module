@@ -43,6 +43,10 @@ function updateAllComponents() {
   }
 }
 
+function closeAllStreams() {
+  twitter.closeAllStreams();
+}
+
 function clearComponents() {
   twitter.closeAllStreams();
   components.clear();
@@ -51,5 +55,6 @@ function clearComponents() {
 module.exports = {
   updateComponent,
   updateAllComponents,
+  closeAllStreams,
   clearComponents
 }

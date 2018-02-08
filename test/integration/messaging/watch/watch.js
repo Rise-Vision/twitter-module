@@ -2,6 +2,7 @@
 /* eslint-disable max-statements, global-require, no-magic-numbers */
 const assert = require("assert");
 const common = require("common-display-module");
+const commonMessaging = require("common-display-module/messaging");
 const simple = require("simple-mock");
 
 const watch = require("../../../../src/messaging/watch/watch");
@@ -13,8 +14,8 @@ describe("Watch - Integration", ()=>
   {
     const settings = {displayid: "DIS123"};
 
-    simple.mock(common, "broadcastMessage").returnWith();
-    simple.mock(common, "getClientList").returnWith();
+    simple.mock(commonMessaging, "broadcastMessage").returnWith();
+    simple.mock(commonMessaging, "getClientList").returnWith();
     simple.mock(common, "getDisplaySettings").resolveWith(settings);
   });
 
@@ -34,8 +35,8 @@ describe("Watch - Integration", ()=>
         .then(() =>
         {
           // no clients, getClientList() should have been called, but no WATCH
-          assert.equal(common.getClientList.callCount, 1);
-          assert.equal(common.broadcastMessage.callCount, 0);
+          assert.equal(commonMessaging.getClientList.callCount, 1);
+          assert.equal(commonMessaging.broadcastMessage.callCount, 1);
 
           // other non-local-storage clients
           return handler({
@@ -46,7 +47,7 @@ describe("Watch - Integration", ()=>
         .then(() =>
         {
           // so WATCH message shouldn't have been sent
-          assert.equal(common.broadcastMessage.callCount, 0);
+          assert.equal(commonMessaging.broadcastMessage.callCount, 1);
 
           // now local-storage is present
           return handler({
@@ -57,11 +58,11 @@ describe("Watch - Integration", ()=>
         .then(() =>
         {
           // so both WATCH messages should have been sent
-          assert.equal(common.broadcastMessage.callCount, 1);
+          assert.equal(commonMessaging.broadcastMessage.callCount, 3);
 
           {
             // this is the request for content.json
-            const event = common.broadcastMessage.calls[0].args[0];
+            const event = commonMessaging.broadcastMessage.calls[1].args[0];
 
             assert(event);
             // check we sent it
@@ -83,7 +84,7 @@ describe("Watch - Integration", ()=>
       }
     }
 
-    simple.mock(common, "receiveMessages").resolveWith(new Receiver());
+    simple.mock(commonMessaging, "receiveMessages").resolveWith(new Receiver());
 
     // deferred require after mocks are set up
     require("../../../../src/index");
