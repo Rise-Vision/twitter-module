@@ -3,6 +3,30 @@ const logger = require("../../src/logger");
 const twitter = require("../../src/api/twitter");
 const broadcastIPC = require("../../src/messaging/broadcast-ipc");
 
+function formatTweets(tweets) {
+  return new Promise(res => {
+    let formattedTweets = tweets;
+
+    if (!Array.isArray(tweets)) {
+      formattedTweets = [];
+      formattedTweets.push(tweets);
+    }
+
+    res(formattedTweets);
+  });
+}
+
+function sendUpdateMessage(updateType, tweets, componentId, data) {
+  formatTweets(tweets)
+  .then((formattedTweets)=>{
+    const messageData = Object.assign({}, {"component_id": componentId}, data, {tweets: JSON.stringify(formattedTweets)});
+    broadcastIPC.twitterUpdate({"status": updateType, "data": messageData});
+  })
+  .catch(error =>{
+    logger.file(error.message, `Could not format Twitter-Update - ${updateType} message for component ${componentId}`)
+  });
+}
+
 function updateComponent(componentId, componentData) {
   const data = componentData || components.getComponentDataById(componentId);
 
@@ -14,17 +38,15 @@ function updateComponent(componentId, componentData) {
     if (error) {
       logger.file(`Could get tweets for ${JSON.stringify(data)}`);
     } else {
-      const messageData = Object.assign({}, {"component_id": componentId}, data, {tweets: JSON.stringify(tweets)});
-      broadcastIPC.twitterUpdate({"status": "Current", "data": messageData});
+      sendUpdateMessage("Current", tweets, componentId, data);
     }
   });
 
-  twitter.streamTweets(componentId, data, (error, tweet)=>{
+  twitter.streamTweets(componentId, data, (error, tweets)=>{
     if (error) {
       logger.file(`Could not stream tweets for ${JSON.stringify(data)}`);
     } else {
-      const messageData = Object.assign({}, {"component_id": componentId}, data, {tweets: JSON.stringify(tweet)});
-      broadcastIPC.twitterUpdate({"status": "Stream", "data": messageData});
+      sendUpdateMessage("Stream", tweets, componentId, data);
     }
   });
 }

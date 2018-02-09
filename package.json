@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/Rise-Vision/twitter-module#readme",
   "devDependencies": {
+    "rewire": "^3.0.2",
     "babel-minify-webpack-plugin": "^0.2.0",
     "copy-webpack-plugin": "^4.1.1",
     "istanbul": "^0.4.5",

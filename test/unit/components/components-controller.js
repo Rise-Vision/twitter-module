@@ -2,11 +2,12 @@
 const assert = require("assert");
 const simple = require("simple-mock");
 const mock = simple.mock;
+const rewire = require("rewire");
 const logger = require("../../../src/logger");
 const twitter = require("../../../src/api/twitter");
 const components = require("../../../src/components/components");
-const componentsController = require("../../../src/components/components-controller");
 const broadcastIPC = require("../../../src/messaging/broadcast-ipc.js");
+const componentsController = rewire("../../../src/components/components-controller");
 
 describe("Components-Controller - Unit", ()=>
 {
@@ -54,6 +55,30 @@ describe("Components-Controller - Unit", ()=>
     componentsController.updateComponent(testComponentId, testComponentData);
     assert(twitter.getTweets.called);
     done();
+  });
+
+  it("should format tweets when only one returned by API", done =>
+  {
+    const formatTweets = componentsController.__get__('formatTweets');
+    const testTweets = {text: "test-text"};
+
+    formatTweets(testTweets)
+    .then((formattedTweets)=>{
+      assert.equal(JSON.stringify(formattedTweets), JSON.stringify([testTweets]));
+      done();
+    })
+  });
+
+  it("should not format tweets when multiple returned by API", done =>
+  {
+    const formatTweets = componentsController.__get__('formatTweets');
+    const testTweets = [{text1: "test-text"}, {text2: "test-text"}];
+
+    formatTweets(testTweets)
+    .then((formattedTweets)=>{
+      assert.equal(JSON.stringify(formattedTweets), JSON.stringify(testTweets));
+      done();
+    })
   });
 
   it("should clear components", done =>
