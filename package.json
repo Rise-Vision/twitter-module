@@ -10,7 +10,8 @@
     "test": "eslint test && eslint src && mocha -r test/mocha-env.js -t 20000 --recursive --exit test/integration/** && mocha -r test/mocha-env.js -t 20000 --recursive --exit test/unit/**",
     "test-unit": "eslint test && eslint src && mocha -r test/mocha-env.js -t 20000 --recursive --exit test/unit/**",
     "test-integration": "eslint test && eslint src && mocha -r test/mocha-env.js -t 20000 --recursive --exit test/integration/**",
-    "build": "eslint src && ./pre-build.sh && webpack --env.MODULE_VERSION=$(cat version) --config webpack.config.js && ./post-build.sh",
+    "build": "eslint src && webpack",
+    "postbuild": "rimraf build/twitter && rimraf build/*.zip",
     "start": "node src/index.js"
   },
   "repository": {
@@ -26,6 +27,7 @@
   "devDependencies": {
     "rewire": "^3.0.2",
     "babel-minify-webpack-plugin": "^0.2.0",
+    "clean-webpack-plugin": "^0.1.18",
     "copy-webpack-plugin": "^4.1.1",
     "istanbul": "^0.4.5",
     "eslint": "^4.10.0",
