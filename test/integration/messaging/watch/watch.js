@@ -26,7 +26,7 @@ describe("Watch - Integration", ()=>
     simple.restore()
   });
 
-  xit("should wait for local-storage to be available to send WATCH messages", done =>
+  it("should wait for local-storage to be available to send WATCH messages", done =>
   {
     function Receiver() {
       this.on = (type, handler) =>

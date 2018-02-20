@@ -9,7 +9,7 @@ describe("Twitter - Integration", ()=> {
     twitter.closeAllStreams();
   });
 
-  xit("should get tweets for screen name", done => {
+  it("should get tweets for screen name", done => {
     twitter.getTweets("risevision", (error, tweets)=>{
       assert(tweets);
       assert.equal(Object.keys(tweets).length, 25);
@@ -17,7 +17,7 @@ describe("Twitter - Integration", ()=> {
     });
   });
 
-  xit("should stream tweets for hashtag", done => {
+  it("should stream tweets for hashtag", done => {
     twitter.streamTweets("test-component-id", {hashtag: "#trump"}, (error, tweets)=>{
       assert(tweets);
       done();

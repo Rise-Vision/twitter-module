@@ -125,7 +125,7 @@ describe("Messaging - Integration", function() {
       });
     });
 
-    xit("waits for twitter component then adds component to watch => sends update message with tweets", () => {
+    it("waits for twitter component then adds component to watch => sends update message with tweets", () => {
       testComponentData = {screen_name: "risevision", hashtag: "testtag"};
       testComponent = Object.assign({}, testComponentId, testComponentData);
 
@@ -146,7 +146,7 @@ describe("Messaging - Integration", function() {
       });
     });
 
-    xit("updates all twitter components if credentials JSON file is changed", () => {
+    it("updates all twitter components if credentials JSON file is changed", () => {
       mock(watch, "receiveCredentialsFile").returnWith(Promise.resolve());
       mock(components, "getComponents").returnWith({"risevision": {"screen_name": "risevision", "hashtag": "testtag"}});
 
