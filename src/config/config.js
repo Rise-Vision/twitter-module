@@ -43,7 +43,7 @@ module.exports = {
   moduleName: MODULE_NAME,
   bqProjectName: "client-side-events",
   bqDataset: "Module_Events",
-  bqTable: "twitter_events",
+  bqTable: "tweet_events",
   failedEntryFile: `${MODULE_NAME}-failed.log`,
   logFolder: common.getModulePath(MODULE_NAME),
   getTwitterCredentials,
