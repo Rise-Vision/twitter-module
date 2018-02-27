@@ -20,11 +20,9 @@ function updateLicensingData(data) {
 
     // detect licensing change
     if (previousAuthorized !== currentAuthorized) {
-      const userFriendlyStatus = currentAuthorized ? "authorized" : "unauthorized";
-
       config.setAuthorized(currentAuthorized);
 
-      broadcastIPC.licensingUpdate(currentAuthorized, userFriendlyStatus);
+      sendLicensing();
 
       if (currentAuthorized) {
         componentsController.updateAllComponents();
@@ -32,14 +30,23 @@ function updateLicensingData(data) {
         componentsController.closeAllStreams();
       }
 
-      return logger.all(userFriendlyStatus, "");
+      return logger.all(_getUserFriendlyStatus(), "");
     }
   }
 
   return Promise.resolve();
 }
 
+function sendLicensing() {
+  broadcastIPC.licensingUpdate(config.isAuthorized(), _getUserFriendlyStatus());
+}
+
+function _getUserFriendlyStatus() {
+  return config.isAuthorized() ? "authorized" : "unauthorized";
+}
+
 module.exports = {
   requestLicensingData,
-  updateLicensingData
+  updateLicensingData,
+  sendLicensing
 };

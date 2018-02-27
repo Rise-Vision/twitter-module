@@ -10,8 +10,13 @@ function handleComponent(message) {
   return update.process(message);
 }
 
+function handleLicensingWatch() {
+  return licensing.sendLicensing();
+}
+
 function handleWSClientConnected() {
-  return update.clear();
+  update.clear();
+  return licensing.sendLicensing();
 }
 
 function handleFileUpdate(message) {
@@ -32,7 +37,9 @@ function messageReceiveHandler(message) {
     case "CLIENT-LIST":
       return watch.checkIfLocalStorageIsAvailable(message);
     case "LICENSING-UPDATE":
-          return licensing.updateLicensingData(message);
+      return licensing.updateLicensingData(message);
+    case "LICENSING-WATCH":
+      return handleLicensingWatch();
     case "FILE-UPDATE":
       return handleFileUpdate(message);
     case "TWITTER-WATCH":
