@@ -1,9 +1,14 @@
 /* eslint-env mocha */
 /* eslint-disable max-statements, no-magic-numbers */
 const assert = require("assert");
+const twitterWrapper = require("../../../src/api/twitter-wrapper");
 const twitter = require("../../../src/api/twitter");
 
 describe("Twitter - Integration", ()=> {
+  before(() => {
+    twitterWrapper.createClient();
+    twitter.init();
+  });
 
   afterEach(()=> {
     twitter.closeAllStreams();

@@ -11,8 +11,9 @@ const clientMock = {
   get: () => {},
   stream: () => {}
 }
-simple.mock(twitterWrapper, "client", clientMock)
+simple.mock(twitterWrapper, "getClient").returnWith(clientMock);
 const twitter = require("../../../src/api/twitter");
+twitter.init();
 
 describe("Twitter - Unit", ()=> {
 

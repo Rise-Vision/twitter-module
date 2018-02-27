@@ -5,6 +5,7 @@ const config = require("../../../src/config/config");
 const logger = require("../../../src/logger");
 const platform = require("rise-common-electron").platform;
 const broadcastIPC = require("../../../src/messaging/broadcast-ipc.js");
+const twitterWrapper = require("../../api/twitter-wrapper");
 
 // So we ensure it will only be sent once.
 let watchMessagesAlreadySentForContent = false;
@@ -70,6 +71,8 @@ function loadCurrentCredentials(credentialsPath) {
       logger.file(`credentials changed ${JSON.stringify(credentials)}`);
 
       config.setTwitterCredentials(credentials);
+      twitterWrapper.createClient();
+
     })
     .catch(error =>
       logger.error(error.message, `Could not parse credentials file ${credentialsPath}`)
@@ -84,6 +87,7 @@ function receiveCredentialsFile(message) {
   switch (message.status) {
     case "DELETED": case "NOEXIST":
       config.setTwitterCredentials(null);
+      twitterWrapper.createClient();
       // allows linking in tests.
       return Promise.resolve();
 
