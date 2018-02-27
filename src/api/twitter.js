@@ -12,7 +12,7 @@ function init() {
 }
 
 function credentialsExist() {
-  const credentials = (client) ? client.options : null;
+  const credentials = client ? client.options : null;
 
   if (!credentials || !credentials.consumer_key || !credentials.consumer_secret || !credentials.access_token_key || !credentials.access_token_secret) {return false;}
   return true;
