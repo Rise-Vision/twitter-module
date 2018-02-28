@@ -1,12 +1,18 @@
 /* eslint-disable prefer-const */
 
 const logger = require("../../src/logger");
-const {client} = require("./twitter-wrapper");
+const twitterWrapper = require("./twitter-wrapper");
 
 let streams = {};
+let client = null;
+
+
+function init() {
+  client = twitterWrapper.getClient();
+}
 
 function credentialsExist() {
-  const credentials = client.options;
+  const credentials = client ? client.options : null;
 
   if (!credentials || !credentials.consumer_key || !credentials.consumer_secret || !credentials.access_token_key || !credentials.access_token_secret) {return false;}
   return true;
@@ -84,5 +90,6 @@ module.exports = {
   streamTweets,
   getTweets,
   closeAllStreams,
-  closeStream
+  closeStream,
+  init
 }

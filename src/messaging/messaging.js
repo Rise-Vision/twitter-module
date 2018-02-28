@@ -1,4 +1,5 @@
 const companyConfigBucket = "risevision-company-notifications";
+const displayConfigBucket = "risevision-display-notifications";
 const commonMessaging = require("common-display-module/messaging");
 const config = require("../../src/config/config");
 const watch = require("./watch/watch");
@@ -20,7 +21,7 @@ function handleWSClientConnected() {
 }
 
 function handleFileUpdate(message) {
-  if (!message.filePath || !message.filePath.startsWith(companyConfigBucket)) {
+  if (!message.filePath || !(message.filePath.startsWith(companyConfigBucket) || message.filePath.startsWith(displayConfigBucket))) {
     return;
   }
   if (message.filePath.endsWith("/twitter.json")) {

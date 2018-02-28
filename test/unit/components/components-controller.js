@@ -4,6 +4,7 @@ const simple = require("simple-mock");
 const mock = simple.mock;
 const rewire = require("rewire");
 const logger = require("../../../src/logger");
+const twitterWrapper = require("../../../src/api/twitter-wrapper");
 const twitter = require("../../../src/api/twitter");
 const components = require("../../../src/components/components");
 const broadcastIPC = require("../../../src/messaging/broadcast-ipc.js");
@@ -18,6 +19,11 @@ describe("Components-Controller - Unit", ()=>
     mock(twitter, "closeAllStreams");
     mock(broadcastIPC, "twitterUpdate");
     mock(logger, "file").returnWith();
+    mock(twitterWrapper, "getClient").returnWith({
+      get: () => {},
+      stream: () => {}
+    });
+    twitter.init();
   });
 
   afterEach(()=> {
