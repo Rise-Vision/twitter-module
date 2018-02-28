@@ -53,9 +53,9 @@ function updateComponent(componentId, componentData) {
 
 function updateAllComponents() {
   logger.file(`Updating all components - re-fetching tweets and restarting streams`);
-
-  if (!twitter.credentialsExist()) {return logger.file("Credentials do not exist - can not update components");}
   twitter.init();
+  if (!twitter.credentialsExist()) {return logger.file("Credentials do not exist - can not update components");}
+
   twitter.closeAllStreams();
 
   const componentsList = components.getComponents();
