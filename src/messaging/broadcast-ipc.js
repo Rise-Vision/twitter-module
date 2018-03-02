@@ -10,7 +10,7 @@ function broadcast(topic, data = {}) {
 
 function licensingUpdate(isAuthorized, userFriendlyStatus, data = {}) {
   if (isAuthorized === null || !userFriendlyStatus) {throw new Error("broadcast - LICENSING-UPDATE - authorized status is invalid");}
-  logger.file(`Broadcasting ${data.status} LICENSING-UPDATE`);
+  logger.file(`Broadcasting LICENSING-UPDATE - ${userFriendlyStatus}`);
 
   const messageData = Object.assign({}, {'is_authorized': isAuthorized, 'user_friendly_status': userFriendlyStatus}, data);
   const messageObject = Object.assign({}, {through: 'ws'}, {data: messageData});

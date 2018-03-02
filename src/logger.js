@@ -21,7 +21,7 @@ function detailsFor(eventDetails, data = {}) {
 }
 
 function error(eventDetails, userFriendlyMessage) {
-  return detailsFor(eventDetails)
+  return detailsFor(`${eventDetails}  - ${userFriendlyMessage}`)
   .then(detail => logger.error(detail, userFriendlyMessage, bqTable));
 }
 
