@@ -29,7 +29,7 @@ function updateLicensingData(data) {
       if (currentAuthorized) {
         componentsController.updateAllComponents();
       } else {
-        componentsController.closeAllStreams();
+        componentsController.finishAllRefreshes();
       }
 
       return logger.all(_getUserFriendlyStatus(), "");

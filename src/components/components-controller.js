@@ -34,19 +34,11 @@ function updateComponent(componentId, componentData) {
 
   if (!twitter.credentialsExist()) {return logger.file("Credentials do not exist - can not update components");}
   twitter.init();
-  twitter.getTweets(data.screen_name, (error, tweets)=>{
+  twitter.getUserTweets(componentId, data.screen_name, (error, tweets)=>{
     if (error) {
       logger.file(`Could get tweets for ${JSON.stringify(data)}`);
     } else {
       sendUpdateMessage("Current", tweets, componentId, data);
-    }
-  });
-
-  twitter.streamTweets(componentId, data, (error, tweets)=>{
-    if (error) {
-      logger.file(`Could not stream tweets for ${JSON.stringify(data)}`);
-    } else {
-      sendUpdateMessage("Stream", tweets, componentId, data);
     }
   });
 }
@@ -56,7 +48,7 @@ function updateAllComponents() {
   twitter.init();
   if (!twitter.credentialsExist()) {return logger.file("Credentials do not exist - can not update components");}
 
-  twitter.closeAllStreams();
+  twitter.finishAllRefreshes();
 
   const componentsList = components.getComponents();
 
@@ -65,18 +57,18 @@ function updateAllComponents() {
   }
 }
 
-function closeAllStreams() {
-  twitter.closeAllStreams();
+function finishAllRefreshes() {
+  twitter.finishAllRefreshes();
 }
 
 function clearComponents() {
-  twitter.closeAllStreams();
+  twitter.finishAllRefreshes();
   components.clear();
 }
 
 module.exports = {
   updateComponent,
   updateAllComponents,
-  closeAllStreams,
+  finishAllRefreshes,
   clearComponents
 }

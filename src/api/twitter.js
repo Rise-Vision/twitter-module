@@ -1,11 +1,10 @@
 /* eslint-disable prefer-const */
 
-const logger = require("../../src/logger");
 const twitterWrapper = require("./twitter-wrapper");
+const config = require("../../src/config/config");
 
-let streams = {};
 let client = null;
-
+let refreshTimers = {};
 
 function init() {
   client = twitterWrapper.getClient();
@@ -18,78 +17,33 @@ function credentialsExist() {
   return true;
 }
 
-function addStream(componentId, stream) {
-    streams[componentId] = stream;
-}
-
-function closeStream(componentId) {
-  let stream = streams[componentId];
-
-  if (streams && componentId && stream && Reflect.has(stream, "destroy")) {
-    stream.destroy();
-    Reflect.deleteProperty(streams, componentId);
-  }
-}
-
-function closeAllStreams() {
-  for (const componentId in streams) {
-    closeStream(componentId);
-  }
-}
-
-function getTweets(screenName, callback) {
+function getUserTweets(componentId, screenName, callback) {
   client.get("statuses/user_timeline", {screen_name: screenName, count: 25}, (error, tweets) => {
     if (error) {return callback(error);}
+    _startRefresh(componentId, screenName, callback);
     callback(null, tweets);
   });
 }
 
-function streamTweets(componentId, componentData, callback) {
-  if (componentData.screen_name) {
-    getUserId(componentData.screen_name)
-    .then(userId => {callFilterApi(componentId, {follow: userId}, callback);})
-    .catch(error => {
-      logger.error(error, `Could not retrieve user ID for ${componentData.screen_name}`);
-      callback(error);
-    })
-  } else if (componentData.hashtag) {
-    callFilterApi(componentId, {track: componentData.hashtag}, callback);
-  }
+function _startRefresh(componentId, screenName, callback) {
+  refreshTimers[componentId] = setTimeout(() => {
+    getUserTweets(componentId, screenName, callback);
+  }, config.tweetsRefreshTime);
 }
 
-function callFilterApi(componentId, params, callback) {
-  client.stream("statuses/filter", params, (stream) => {
-    addStream(componentId, stream);
-
-    stream.on("data", (tweet) => {
-      callback(null, tweet);
-    });
-
-    stream.on("error", (error) => {
-      logger.error(error, `Could not stream tweets for ${JSON.stringify(params)}`);
-      callback(error);
-    });
-  });
+function finishAllRefreshes() {
+  Object.values(refreshTimers).forEach(timer => clearTimeout(timer));
+  refreshTimers = {};
 }
 
-function getUserId(screenName) {
-  return new Promise((resolve, reject)=>{
-    client.get("users/lookup", {screen_name: screenName}, (error, user) => {
-      if (error) {
-        reject(JSON.stringify(error));
-      }
-      if (user[0]) {
-        resolve(user[0].id_str || user[0].id);
-      }
-    });
-  });
+function finishRefresh(componentId) {
+  Reflect.deleteProperty(refreshTimers, componentId);
 }
 
 module.exports = {
   credentialsExist,
-  streamTweets,
-  getTweets,
-  closeAllStreams,
-  closeStream,
+  getUserTweets,
+  finishAllRefreshes,
+  finishRefresh,
   init
 }
