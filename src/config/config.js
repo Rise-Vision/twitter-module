@@ -7,7 +7,7 @@ let twitterCredentials = null;
 let companyId = null;
 
 // will turn to either true or false when valid license data is received
-let authorized = false;
+let authorized = null;
 
 function getCompanyId() {
   return companyId;
