@@ -46,6 +46,7 @@ module.exports = {
   bqTable: "tweet_events",
   failedEntryFile: `${MODULE_NAME}-failed.log`,
   logFolder: common.getModulePath(MODULE_NAME),
+  tweetsRefreshTime: 60 * 60 * 1000, // eslint-disable-line
   getTwitterCredentials,
   setTwitterCredentials,
   getCompanyId,

@@ -17,7 +17,7 @@ describe("Licensing - Unit", ()=> {
   beforeEach(() => {
     mock(logger, "all").returnWith();
     mock(componentsController, "updateAllComponents").returnWith();
-    mock(componentsController, "closeAllStreams").returnWith();
+    mock(componentsController, "finishAllRefreshes").returnWith();
     mock(commonMessaging, "broadcastMessage").returnWith();
 
     expectedAuthorizedMessage = {from: 'twitter',
@@ -81,7 +81,7 @@ describe("Licensing - Unit", ()=> {
 
     assert(!config.isAuthorized());
 
-    assert(componentsController.closeAllStreams.called);
+    assert(componentsController.finishAllRefreshes.called);
 
     assert.equal(JSON.stringify(commonMessaging.broadcastMessage.lastCall.args[0]), JSON.stringify(expectedUnauthorizedMessage));
 
@@ -124,7 +124,7 @@ describe("Licensing - Unit", ()=> {
       assert(!config.isAuthorized());
 
       assert.equal(componentsController.updateAllComponents.callCount, 0);
-      assert.equal(componentsController.closeAllStreams.callCount, 1);
+      assert.equal(componentsController.finishAllRefreshes.callCount, 1);
 
       assert.equal(commonMessaging.broadcastMessage.callCount, 1);
       assert.equal(JSON.stringify(commonMessaging.broadcastMessage.lastCall.args[0]), JSON.stringify(expectedUnauthorizedMessage));
@@ -151,7 +151,7 @@ describe("Licensing - Unit", ()=> {
 
       // should not be handled again if same authorization
       assert.equal(componentsController.updateAllComponents.callCount, 0);
-      assert.equal(componentsController.closeAllStreams.callCount, 1);
+      assert.equal(componentsController.finishAllRefreshes.callCount, 1);
 
       assert.equal(commonMessaging.broadcastMessage.callCount, 1);
 
@@ -174,7 +174,7 @@ describe("Licensing - Unit", ()=> {
       assert(config.isAuthorized());
 
       assert.equal(componentsController.updateAllComponents.callCount, 1);
-      assert.equal(componentsController.closeAllStreams.callCount, 1);
+      assert.equal(componentsController.finishAllRefreshes.callCount, 1);
 
       assert.equal(commonMessaging.broadcastMessage.callCount, 2);
       assert.equal(JSON.stringify(commonMessaging.broadcastMessage.lastCall.args[0]), JSON.stringify(expectedAuthorizedMessage));
@@ -200,7 +200,7 @@ describe("Licensing - Unit", ()=> {
 
       // should not be handled again if same authorization
       assert.equal(componentsController.updateAllComponents.callCount, 1);
-      assert.equal(componentsController.closeAllStreams.callCount, 1);
+      assert.equal(componentsController.finishAllRefreshes.callCount, 1);
 
       assert.equal(commonMessaging.broadcastMessage.callCount, 2);
 

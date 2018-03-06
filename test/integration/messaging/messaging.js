@@ -35,7 +35,7 @@ describe("Messaging - Integration", function() {
       mock(update, "clear");
       mock(components, "addComponent");
       mock(components, "removeComponent");
-      mock(twitter, "closeStream");
+      mock(twitter, "finishRefresh");
       mock(componentsController, "updateComponent");
       mock(broadcastIPC, "twitterUpdate");
 
@@ -53,7 +53,7 @@ describe("Messaging - Integration", function() {
     });
 
     afterEach(() => {
-      twitter.closeAllStreams();
+      twitter.finishAllRefreshes();
       commonMessaging.disconnect();
       simple.restore();
       components.clear();

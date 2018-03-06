@@ -15,8 +15,8 @@ describe("Components-Controller - Unit", ()=>
   beforeEach(()=>{
     mock(twitter, "credentialsExist").returnWith(true);
 
-    mock(twitter, "getTweets");
-    mock(twitter, "closeAllStreams");
+    mock(twitter, "getUserTweets");
+    mock(twitter, "finishAllRefreshes");
     mock(broadcastIPC, "twitterUpdate");
     mock(logger, "file").returnWith();
     mock(twitterWrapper, "getClient").returnWith({
@@ -40,7 +40,7 @@ describe("Components-Controller - Unit", ()=>
     const testComponentData = {screen_name: "RiseVision", hashtag: "risevision"}
     componentsController.updateComponent(testComponentId, testComponentData);
     assert(logger.file.lastCall.args[0].includes("Invalid params"));
-    assert(!twitter.getTweets.called);
+    assert(!twitter.getUserTweets.called);
     done();
   });
 
@@ -50,7 +50,7 @@ describe("Components-Controller - Unit", ()=>
     const testComponentData = {};
     componentsController.updateComponent(testComponentId, testComponentData);
     assert(logger.file.lastCall.args[0].includes("Invalid params"));
-    assert(!twitter.getTweets.called);
+    assert(!twitter.getUserTweets.called);
     done();
   });
 
@@ -59,7 +59,7 @@ describe("Components-Controller - Unit", ()=>
     const testComponentId = "test_component_id";
     const testComponentData = {screen_name: "RiseVision", hashtag: "risevision"}
     componentsController.updateComponent(testComponentId, testComponentData);
-    assert(twitter.getTweets.called);
+    assert(twitter.getUserTweets.called);
     done();
   });
 
@@ -91,7 +91,7 @@ describe("Components-Controller - Unit", ()=>
   {
     mock(components, "clear");
     componentsController.clearComponents();
-    assert(twitter.closeAllStreams.called);
+    assert(twitter.finishAllRefreshes.called);
     assert(components.clear.called);
     done();
   });
