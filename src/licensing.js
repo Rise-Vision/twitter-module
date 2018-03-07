@@ -6,11 +6,30 @@ const componentsController = require("./components/components-controller");
 const broadcastIPC = require("./messaging/broadcast-ipc");
 const logger = require("./logger");
 
+let initialRequestAlreadySent = false;
+
+function clearInitialRequestSent() {
+  initialRequestAlreadySent = false;
+}
+
 function requestLicensingData() {
   return licensing.requestLicensingData(config.moduleName)
   .catch(error => {
     logger.error(error.stack, "Error while requesting licensing data");
   });
+}
+
+function checkIfLicensingIsAvailable(message) {
+  if (!initialRequestAlreadySent) {
+    const clients = message.clients;
+
+    if (clients.includes("licensing")) {
+      return module.exports.requestLicensingData()
+        .then(() => initialRequestAlreadySent = true);
+      }
+    }
+
+  return Promise.resolve();
 }
 
 function updateLicensingData(data) {
@@ -48,7 +67,9 @@ function _getUserFriendlyStatus() {
 }
 
 module.exports = {
+  clearInitialRequestSent,
   requestLicensingData,
+  checkIfLicensingIsAvailable,
   updateLicensingData,
   sendLicensing
 };
