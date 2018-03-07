@@ -158,7 +158,7 @@ describe("Messaging -> Watch - Unit", ()=> {
       assert.equal(config.getCompanyId(), "companyXXXXXX");
 
       assert(commonMessaging.broadcastMessage.called);
-      assert.equal(1, commonMessaging.broadcastMessage.callCount);
+      assert.equal(3, commonMessaging.broadcastMessage.callCount);
 
       // this is the request for content.json
       const event = commonMessaging.broadcastMessage.calls[0].args[0];

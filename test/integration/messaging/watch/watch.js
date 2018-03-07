@@ -58,7 +58,7 @@ describe("Watch - Integration", ()=>
         .then(() =>
         {
           // so both WATCH messages should have been sent
-          assert.equal(commonMessaging.broadcastMessage.callCount, 3);
+          assert.equal(commonMessaging.broadcastMessage.callCount, 4);
 
           {
             // this is the request for content.json
