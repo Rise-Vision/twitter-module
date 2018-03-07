@@ -27,6 +27,7 @@ function checkIfLocalStorageIsAvailable(message) {
     const clients = message.clients;
 
     if (clients.includes("local-storage")) {
+      logger.file(`confirmation that local-storage is connected before sending WATCH`);
       return sendWatchMessagesForContentFile()
       .then(() => watchMessagesAlreadySentForContent = true);
     }
@@ -40,6 +41,8 @@ function sendWatchMessagesForCredentials() {
     const filePath = `risevision-company-notifications/${config.getCompanyId()}/credentials/twitter.json`;
 
     broadcastIPC.broadcast("watch", {filePath});
+
+    logger.all("watch", `watch message sent for credentials at ${filePath}`);
   }
 
   return Promise.resolve();
@@ -52,6 +55,8 @@ function sendWatchMessagesForContentFile() {
       const filePath = `risevision-display-notifications/${displayId}/content.json`;
 
       broadcastIPC.broadcast("watch", {filePath});
+
+      logger.all("watch", `watch message sent for content at ${filePath}`);
     });
 }
 
@@ -84,6 +89,8 @@ function loadCurrentCredentials(credentialsPath) {
 }
 
 function receiveCredentialsFile(message) {
+  logger.all(`credentials received with status: ${message.status || "invalid status"}`);
+
   switch (message.status) {
     case "DELETED": case "NOEXIST":
       config.setTwitterCredentials(null);
@@ -96,6 +103,8 @@ function receiveCredentialsFile(message) {
 }
 
 function receiveContentFile(message) {
+  logger.all(`content received with status: ${message.status || "invalid status"}`);
+
   if (["DELETED", "NOEXIST"].includes(message.status)) {return;}
 
   return platform.readTextFile(message.ospath)
