@@ -31,9 +31,9 @@ function updateComponent(componentId, componentData) {
   const data = componentData || components.getComponentDataById(componentId);
 
   if (!componentId || !data || !Reflect.has(data, "screen_name")) {return logger.file(`Invalid params - component not found for ${componentId}`);}
-
-  if (!twitter.credentialsExist()) {return logger.file("Credentials do not exist - can not update components");}
   twitter.init();
+  if (!twitter.credentialsExist()) {return logger.file("Credentials do not exist - can not update components");}
+
   twitter.getUserTweets(componentId, data.screen_name, (error, tweets)=>{
     if (error) {
       logger.file(`Could get tweets for ${JSON.stringify(data)}`);
