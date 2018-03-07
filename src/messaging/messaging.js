@@ -54,6 +54,8 @@ function messageReceiveHandler(message) {
 
 module.exports = {
   init() {
+    logger.file(`LM is connected`);
+
     commonMessaging.receiveMessages(config.moduleName).then((receiver) => {
       receiver.on("message", messageReceiveHandler);
     });

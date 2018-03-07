@@ -27,6 +27,7 @@ function checkIfLocalStorageIsAvailable(message) {
     const clients = message.clients;
 
     if (clients.includes("local-storage")) {
+      logger.file(`confirmation that local-storage is connected before sending WATCH`);
       return sendWatchMessagesForContentFile()
       .then(() => watchMessagesAlreadySentForContent = true);
     }
