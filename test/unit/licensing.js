@@ -4,11 +4,13 @@ const assert = require("assert");
 const simple = require("simple-mock");
 const mock = simple.mock;
 
+const licensingCommon = require("common-display-module/licensing");
 const config = require("../../src/config/config");
 const licensing = require("../../src/licensing");
 const logger = require("../../src/logger");
 const componentsController = require("../../src/components/components-controller");
 const commonMessaging = require("common-display-module/messaging");
+
 
 let expectedAuthorizedMessage = null;
 let expectedUnauthorizedMessage = null;
@@ -19,6 +21,7 @@ describe("Licensing - Unit", ()=> {
     mock(componentsController, "updateAllComponents").returnWith();
     mock(componentsController, "finishAllRefreshes").returnWith();
     mock(commonMessaging, "broadcastMessage").returnWith();
+    mock(licensingCommon, "requestLicensingData").resolveWith();
 
     expectedAuthorizedMessage = {from: 'twitter',
       topic: 'licensing-update',
@@ -36,6 +39,58 @@ describe("Licensing - Unit", ()=> {
   afterEach(()=> {
     simple.restore();
     config.setAuthorized(null);
+  });
+
+
+  it("should not send LICENSING-REQUEST message if no module is available", done => {
+    licensing.checkIfLicensingIsAvailable({clients: []})
+    .then(() => {
+      // no clients, so requestLicensingData shouldn't have been sent
+      assert(!licensingCommon.requestLicensingData.called);
+
+      done();
+    })
+    .catch(error => {
+      assert.fail(error)
+
+      done()
+    });
+  });
+
+  it("should not send LICENSING-REQUEST message if licensing modules is not available", done => {
+    licensing.checkIfLicensingIsAvailable({
+      clients: ["logging", "system-metrics"]
+    })
+    .then(() => {
+      // no clients, so requestLicensingData shouldn't have been sent
+      assert(!licensingCommon.requestLicensingData.called);
+
+      done();
+    })
+    .catch(error => {
+      assert.fail(error)
+
+      done()
+    });
+  });
+
+
+  it("should send LICENSING-REQUEST message if licensing module is available", done => {
+    licensing.checkIfLicensingIsAvailable({
+      clients: ["logging", "system-metrics", "licensing"]
+    })
+    .then(() => {
+      console.log("HEY")
+      // so requestLicensingData should have been called
+      assert(licensingCommon.requestLicensingData.called);
+      assert.equal(1, licensingCommon.requestLicensingData.callCount);
+
+      done();
+    })
+    .catch(error => {
+      assert.fail(error);
+      done();
+    });
   });
 
   it("should be authorized if Rise Player Professional is active", () => {
