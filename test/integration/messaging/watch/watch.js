@@ -36,7 +36,7 @@ describe("Watch - Integration", ()=>
         {
           // no clients, getClientList() should have been called, but no WATCH
           assert.equal(commonMessaging.getClientList.callCount, 1);
-          assert.equal(commonMessaging.broadcastMessage.callCount, 1);
+          assert.equal(commonMessaging.broadcastMessage.callCount, 0);
 
           // other non-local-storage clients
           return handler({
@@ -47,7 +47,7 @@ describe("Watch - Integration", ()=>
         .then(() =>
         {
           // so WATCH message shouldn't have been sent
-          assert.equal(commonMessaging.broadcastMessage.callCount, 1);
+          assert.equal(commonMessaging.broadcastMessage.callCount, 0);
 
           // now local-storage is present
           return handler({
@@ -58,11 +58,11 @@ describe("Watch - Integration", ()=>
         .then(() =>
         {
           // so both WATCH messages should have been sent
-          assert.equal(commonMessaging.broadcastMessage.callCount, 4);
+          assert.equal(commonMessaging.broadcastMessage.callCount, 2);
 
           {
             // this is the request for content.json
-            const event = commonMessaging.broadcastMessage.calls[1].args[0];
+            const event = commonMessaging.broadcastMessage.calls[0].args[0];
 
             assert(event);
             // check we sent it
