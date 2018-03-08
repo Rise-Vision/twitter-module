@@ -11,6 +11,11 @@ function handleComponent(message) {
   return update.process(message);
 }
 
+function handleClientList(message) {
+  return watch.checkIfLocalStorageIsAvailable(message)
+    .then(() => {licensing.checkIfLicensingIsAvailable(message)});
+}
+
 function handleLicensingWatch() {
   return licensing.sendLicensing();
 }
@@ -36,7 +41,7 @@ function handleFileUpdate(message) {
 function messageReceiveHandler(message) {
   switch (message.topic.toUpperCase()) {
     case "CLIENT-LIST":
-      return watch.checkIfLocalStorageIsAvailable(message);
+      return handleClientList(message);
     case "LICENSING-UPDATE":
       return licensing.updateLicensingData(message);
     case "LICENSING-WATCH":
