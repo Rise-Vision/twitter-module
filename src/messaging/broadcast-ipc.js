@@ -9,12 +9,15 @@ function broadcast(topic, data = {}) {
 }
 
 function licensingUpdate(isAuthorized, userFriendlyStatus, data = {}) {
-  if (isAuthorized === null || !userFriendlyStatus) {throw new Error("broadcast - LICENSING-UPDATE - authorized status is invalid");}
-  logger.file(`Broadcasting LICENSING-UPDATE - ${userFriendlyStatus}`);
+  if (isAuthorized !== null && userFriendlyStatus) {
+    logger.file(`Broadcasting LICENSING-UPDATE - ${userFriendlyStatus}`);
 
-  const messageData = Object.assign({}, {'is_authorized': isAuthorized, 'user_friendly_status': userFriendlyStatus}, data);
-  const messageObject = Object.assign({}, {through: 'ws'}, {data: messageData});
-  broadcast("licensing-update", messageObject);
+    const messageData = Object.assign({}, {'is_authorized': isAuthorized, 'user_friendly_status': userFriendlyStatus}, data);
+    const messageObject = Object.assign({}, {through: 'ws'}, {data: messageData});
+    broadcast("licensing-update", messageObject);
+  } else {
+    logger.file(`Attempted Licensing Update - Authorization status not recieved`);
+  }
 }
 
 function twitterUpdate(data = {}) {
