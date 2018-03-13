@@ -39,6 +39,7 @@ function handleFileUpdate(message) {
 }
 
 function messageReceiveHandler(message) {
+  if (!message.topic) {return;}
   switch (message.topic.toUpperCase()) {
     case "CLIENT-LIST":
       return handleClientList(message);
