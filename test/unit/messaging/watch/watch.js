@@ -16,6 +16,7 @@ describe("Messaging -> Watch - Unit", ()=> {
     const settings = {displayid: "DIS123"};
 
     simple.mock(commonMessaging, "broadcastMessage").returnWith();
+    simple.mock(logger, "file").returnWith();
     simple.mock(logger, "error").returnWith();
     simple.mock(common, "getDisplaySettings").resolveWith(settings);
   });
@@ -175,7 +176,7 @@ describe("Messaging -> Watch - Unit", ()=> {
     });
   });
 
-  it("should catch invalid company id", ()=>{
+  it("should catch invalid content file - no companyId", ()=>{
     const mockScheduleText = '{"content": {"schedule": {}}}';
     simple.mock(platform, "readTextFile").resolveWith(mockScheduleText);
 
@@ -185,12 +186,42 @@ describe("Messaging -> Watch - Unit", ()=> {
       ospath: "xxxxxxx"
     })
     .then(() => {
-      assert(logger.error.lastCall.args[0].includes("Invalid CompanyId"));
-      assert(logger.error.lastCall.args[1].startsWith("Could not parse"));
+      assert(logger.file.lastCall.args[0].includes("invalid content file - no companyId in content file"));
+      assert.equal(logger.error.callCount, 0);
+    });
+  });
+
+  it("should catch invalid content file - no schedule", ()=>{
+    const mockScheduleText = '{"content": {"presentations": {}}}';
+    simple.mock(platform, "readTextFile").resolveWith(mockScheduleText);
+
+    return watch.receiveContentFile({
+      topic: "file-update",
+      status: "CURRENT",
+      ospath: "xxxxxxx"
+    })
+    .then(() => {
+      assert(logger.file.lastCall.args[0].includes("invalid content file - no companyId in content file"));
+      assert.equal(logger.error.callCount, 0);
     });
   });
 
   it("should catch invalid content file", ()=>{
+    const mockScheduleText = '{}';
+    simple.mock(platform, "readTextFile").resolveWith(mockScheduleText);
+
+    return watch.receiveContentFile({
+      topic: "file-update",
+      status: "CURRENT",
+      ospath: "xxxxxxx"
+    })
+    .then(() => {
+      assert(logger.file.lastCall.args[0].includes("invalid content file - no companyId in content file"));
+      assert.equal(logger.error.callCount, 0);
+    });
+  });
+
+  it("should catch invalid content file - can not parse", ()=>{
     const mockScheduleText = '{"content": invalid}';
     simple.mock(platform, "readTextFile").resolveWith(mockScheduleText);
 
@@ -204,7 +235,7 @@ describe("Messaging -> Watch - Unit", ()=> {
     });
   });
 
-  it("should catch invalid content file", ()=>{
+  it("should catch invalid content file - can not parse", ()=>{
     const mockScheduleText = '{{';
     simple.mock(platform, "readTextFile").resolveWith(mockScheduleText);
 

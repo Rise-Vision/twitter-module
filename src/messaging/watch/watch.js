@@ -1,4 +1,4 @@
-/* eslint-disable line-comment-position, no-inline-comments */
+/* eslint-disable line-comment-position, no-inline-comments, max-statements */
 
 const common = require("common-display-module");
 const config = require("../../../src/config/config");
@@ -110,15 +110,23 @@ function receiveContentFile(message) {
   return platform.readTextFile(message.ospath)
   .then(fileData=>{
     try {
+      logger.file(`content recieved - ${fileData}`);
+
       const fileJSON = JSON.parse(fileData);
-      if (!fileJSON.content.schedule.companyId) {throw new Error("Invalid CompanyId");}
+      const isValidContent = Reflect.has(fileJSON, "content") && Reflect.has(fileJSON.content, "schedule");
+      const companyId = isValidContent ? fileJSON.content.schedule.companyId : null;
 
-      logger.file(`Setting companyId ${JSON.stringify(fileJSON.content.schedule.companyId)}`);
+      if (!companyId) {
+        logger.file(`invalid content file - no companyId in content file`);
+        return;
+      }
 
-      config.setCompanyId(fileJSON.content.schedule.companyId);
+      logger.file(`Setting companyId ${JSON.stringify(companyId)}`);
+      config.setCompanyId(companyId);
+
       return sendWatchMessagesForCredentials().then(() => watchMessagesAlreadySentForCredentials = true);
     } catch (error) {
-      logger.error(error.stack, `Could not parse content file ${message.ospath}`)
+      logger.error(error.stack, `Could not parse content file ${message.ospath}`);
     }
   });
 }
