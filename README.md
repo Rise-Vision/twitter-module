@@ -4,7 +4,7 @@
 
 The Twitter Module is a Rise Player Module responsible for getting the Tweets from Twitter API for Twitter Components present on Digital Signage Presentations.
 
-Project Name works in conjunction with [Rise Vision](http://www.risevision.com), the [digital signage management application](http://apps.risevision.com/) that runs on [Google Cloud](https://cloud.google.com).
+Twitter Module works in conjunction with [Rise Vision](http://www.risevision.com), the [digital signage management application](http://apps.risevision.com/) that runs on [Google Cloud](https://cloud.google.com).
 
 At this time Chrome is the only browser that this project and Rise Vision supports.
 
