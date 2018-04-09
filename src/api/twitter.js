@@ -18,7 +18,7 @@ function credentialsExist() {
 }
 
 function getUserTweets(componentId, screenName, callback) {
-  client.get("statuses/user_timeline", {screen_name: screenName, count: 25}, (error, tweets) => {
+  client.get("statuses/user_timeline", {screen_name: screenName, count: 25, tweet_mode: "extended"}, (error, tweets) => {
     if (error) {return callback(error);}
     _startRefresh(componentId, screenName, callback);
     callback(null, tweets);
