@@ -42,6 +42,8 @@ function sendWatchMessagesForCredentials() {
 
     broadcastIPC.broadcast("watch", {filePath});
 
+    watchMessagesAlreadySentForCredentials = true
+
     logger.all("watch", `watch message sent for credentials at ${filePath}`);
   }
 
@@ -136,5 +138,6 @@ module.exports = {
   clearMessagesAlreadySentFlagForContent,
   clearMessagesAlreadySentFlagForCredentials,
   receiveCredentialsFile,
-  receiveContentFile
+  receiveContentFile,
+  sendWatchMessagesForCredentials
 };
