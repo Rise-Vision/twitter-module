@@ -1,7 +1,6 @@
 /* eslint-env mocha */
 /* eslint-disable max-statements, global-require, no-magic-numbers */
 const assert = require("assert");
-const common = require("common-display-module");
 const commonMessaging = require("common-display-module/messaging");
 const simple = require("simple-mock");
 
@@ -12,53 +11,26 @@ describe("Watch - Integration", ()=>
 
   beforeEach(()=>
   {
-    const settings = {displayid: "DIS123"};
-
     simple.mock(commonMessaging, "broadcastMessage").returnWith();
     simple.mock(commonMessaging, "getClientList").returnWith();
-    simple.mock(common, "getDisplaySettings").resolveWith(settings);
   });
 
   afterEach(()=> {
-    watch.clearMessagesAlreadySentFlagForContent();
     watch.clearMessagesAlreadySentFlagForCredentials();
 
     simple.restore()
   });
 
-  it("should wait for local-storage to be available to send WATCH messages", done =>
+  it("should wait for display data message to send Twitter WATCH message", done =>
   {
     function Receiver() {
       this.on = (type, handler) =>
       {
-        handler({topic: "client-list", clients: []})
-        .then(() =>
-        {
-          // no clients, getClientList() should have been called, but no WATCH
-          assert.equal(commonMessaging.getClientList.callCount, 1);
-          assert.equal(commonMessaging.broadcastMessage.callCount, 0);
-
-          // other non-local-storage clients
-          return handler({
-            topic: "client-list",
-            clients: ["logging", "system-metrics"]
-          })
-        })
-        .then(() =>
-        {
-          // so WATCH message shouldn't have been sent
-          assert.equal(commonMessaging.broadcastMessage.callCount, 0);
-
-          // now local-storage is present
-          return handler({
-            topic: "client-list",
-            clients: ["logging", "system-metrics", "local-storage"]
-          });
-        })
+        handler({topic: "display-data-update", displayData: {companyId: "123456-COMPANY"}})
         .then(() =>
         {
           // so both WATCH messages should have been sent
-          assert.equal(commonMessaging.broadcastMessage.callCount, 2);
+          assert.equal(commonMessaging.broadcastMessage.callCount, 1);
 
           {
             // this is the request for content.json
@@ -70,7 +42,7 @@ describe("Watch - Integration", ()=>
             // check it's a WATCH event
             assert.equal(event.topic, "watch");
             // check the URL of the file.
-            assert.equal(event.filePath, "risevision-display-notifications/DIS123/content.json");
+            assert.equal(event.filePath, "risevision-company-notifications/123456-COMPANY/credentials/twitter.json");
           }
 
           done();
