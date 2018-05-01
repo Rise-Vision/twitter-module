@@ -5,8 +5,7 @@ const simple = require("simple-mock");
 
 const licensingCommon = require("common-display-module/licensing");
 const commonMessaging = require("common-display-module/messaging");
-const watch = require("../../../src/messaging/watch/watch");
-
+const licensing = require("../../../src/licensing");
 const messaging = require("../../../src/messaging/messaging");
 
 describe("Licensing - Integration", ()=>
@@ -15,8 +14,7 @@ describe("Licensing - Integration", ()=>
   beforeEach(()=>
   {
     simple.mock(licensingCommon, "requestLicensingData").resolveWith();
-    simple.mock(watch, "checkIfLocalStorageIsAvailable").resolveWith();
-
+    simple.mock(licensing, "requestDisplayData").resolveWith();
   });
 
   after(()=> {
