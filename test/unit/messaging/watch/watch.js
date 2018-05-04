@@ -2,6 +2,7 @@
 /* eslint-disable max-statements, no-magic-numbers */
 const assert = require("assert");
 const logger = require("../../../../src/logger");
+const common = require("common-display-module");
 const commonMessaging = require("common-display-module/messaging");
 const simple = require("simple-mock");
 const platform = require("rise-common-electron").platform;
@@ -12,19 +13,56 @@ const watch = require("../../../../src/messaging/watch/watch");
 describe("Messaging -> Watch - Unit", ()=> {
 
   beforeEach(()=> {
+    const settings = {displayid: "DIS123"};
+
     simple.mock(commonMessaging, "broadcastMessage").returnWith();
     simple.mock(logger, "file").returnWith();
     simple.mock(logger, "error").returnWith();
-    simple.mock(config, "getCompanyId").returnWith("123456-COMPANY");
+    simple.mock(common, "getDisplaySettings").resolveWith(settings);
   });
 
   afterEach(()=> {
+    watch.clearMessagesAlreadySentFlagForContent();
     watch.clearMessagesAlreadySentFlagForCredentials();
     simple.restore()
   });
 
-  it("should send WATCH messages", done => {
-    watch.sendWatchMessagesForCredentials()
+  it("should not send WATCH messages if no module is available", done => {
+    watch.checkIfLocalStorageIsAvailable({clients: []})
+    .then(() => {
+      // no clients, so WATCH messages shouldn't have been sent
+      assert(!commonMessaging.broadcastMessage.called);
+
+      done();
+    })
+    .catch(error => {
+      assert.fail(error)
+
+      done()
+    });
+  });
+
+  it("should not send WATCH messages if local-storage module is not available", done => {
+    watch.checkIfLocalStorageIsAvailable({
+      clients: ["logging", "system-metrics"]
+    })
+    .then(() => {
+      // so WATCH messages shouldn't have been sent
+      assert(!commonMessaging.broadcastMessage.called);
+
+      done();
+    })
+    .catch(error => {
+      assert.fail(error)
+
+      done()
+    });
+  });
+
+  it("should send WATCH messages if local-storage module is available", done => {
+    watch.checkIfLocalStorageIsAvailable({
+      clients: ["logging", "system-metrics", "local-storage"]
+    })
     .then(() => {
       // so WATCH messages should have been sent for content.json file
       assert(commonMessaging.broadcastMessage.called);
@@ -40,7 +78,7 @@ describe("Messaging -> Watch - Unit", ()=> {
         // check it's a WATCH event
         assert.equal(event.topic, "watch");
         // check the URL of the file.
-        assert.equal(event.filePath, "risevision-company-notifications/123456-COMPANY/credentials/twitter.json");
+        assert.equal(event.filePath, "risevision-display-notifications/DIS123/content.json");
       }
 
       done();
@@ -105,6 +143,109 @@ describe("Messaging -> Watch - Unit", ()=> {
       assert.fail(error)
 
       done()
+    });
+  });
+
+  it("should receive content file", done =>{
+    const mockScheduleText = '{"content": {"schedule": {"companyId": "companyXXXXXX"}}}';
+    simple.mock(platform, "readTextFile").resolveWith(mockScheduleText);
+
+    watch.receiveContentFile({
+      topic: "file-update",
+      status: "CURRENT",
+      ospath: "xxxxxxx"
+    })
+    .then(() => {
+      assert.equal(config.getCompanyId(), "companyXXXXXX");
+
+      assert(commonMessaging.broadcastMessage.called);
+      assert.equal(3, commonMessaging.broadcastMessage.callCount);
+
+      // this is the request for content.json
+      const event = commonMessaging.broadcastMessage.calls[0].args[0];
+
+      assert(event);
+      // check we sent it
+      assert.equal(event.from, "twitter");
+      // check it's a WATCH event
+      assert.equal(event.topic, "watch");
+      // check the URL of the file.
+      assert.equal(event.filePath, "risevision-company-notifications/companyXXXXXX/credentials/twitter.json");
+
+      done();
+    });
+  });
+
+  it("should catch invalid content file - no companyId", ()=>{
+    const mockScheduleText = '{"content": {"schedule": {}}}';
+    simple.mock(platform, "readTextFile").resolveWith(mockScheduleText);
+
+    return watch.receiveContentFile({
+      topic: "file-update",
+      status: "CURRENT",
+      ospath: "xxxxxxx"
+    })
+    .then(() => {
+      assert(logger.file.lastCall.args[0].includes("invalid content file - no companyId in content file"));
+      assert.equal(logger.error.callCount, 0);
+    });
+  });
+
+  it("should catch invalid content file - no schedule", ()=>{
+    const mockScheduleText = '{"content": {"presentations": {}}}';
+    simple.mock(platform, "readTextFile").resolveWith(mockScheduleText);
+
+    return watch.receiveContentFile({
+      topic: "file-update",
+      status: "CURRENT",
+      ospath: "xxxxxxx"
+    })
+    .then(() => {
+      assert(logger.file.lastCall.args[0].includes("invalid content file - no companyId in content file"));
+      assert.equal(logger.error.callCount, 0);
+    });
+  });
+
+  it("should catch invalid content file", ()=>{
+    const mockScheduleText = '{}';
+    simple.mock(platform, "readTextFile").resolveWith(mockScheduleText);
+
+    return watch.receiveContentFile({
+      topic: "file-update",
+      status: "CURRENT",
+      ospath: "xxxxxxx"
+    })
+    .then(() => {
+      assert(logger.file.lastCall.args[0].includes("invalid content file - no companyId in content file"));
+      assert.equal(logger.error.callCount, 0);
+    });
+  });
+
+  it("should catch invalid content file - can not parse", ()=>{
+    const mockScheduleText = '{"content": invalid}';
+    simple.mock(platform, "readTextFile").resolveWith(mockScheduleText);
+
+    return watch.receiveContentFile({
+      topic: "file-update",
+      status: "CURRENT",
+      ospath: "xxxxxxx"
+    })
+    .then(() => {
+      assert(logger.error.lastCall.args[1].startsWith("Could not parse"));
+    });
+  });
+
+  it("should catch invalid content file - can not parse", ()=>{
+    const mockScheduleText = '{{';
+    simple.mock(platform, "readTextFile").resolveWith(mockScheduleText);
+
+    return watch.receiveContentFile({
+      topic: "file-update",
+      status: "CURRENT",
+      ospath: "xxxxxxx"
+    })
+    .then(() => {
+      assert(logger.error.lastCall.args[1].startsWith("Could not parse"));
     });
   });
 });
