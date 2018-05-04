@@ -19,17 +19,12 @@ function requestLicensingData() {
   });
 }
 
-function requestDisplayData() {
-  return broadcastIPC.broadcast('display-data-request');
-}
-
 function checkIfLicensingIsAvailable(message) {
   if (!initialRequestAlreadySent) {
     const clients = message.clients;
 
     if (clients.includes("licensing")) {
       return module.exports.requestLicensingData()
-        .then(() => module.exports.requestDisplayData())
         .then(() => initialRequestAlreadySent = true);
       }
     }
@@ -74,7 +69,6 @@ function _getUserFriendlyStatus() {
 module.exports = {
   clearInitialRequestSent,
   requestLicensingData,
-  requestDisplayData,
   checkIfLicensingIsAvailable,
   updateLicensingData,
   sendLicensing
