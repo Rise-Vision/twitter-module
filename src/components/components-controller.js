@@ -30,9 +30,13 @@ function sendUpdateMessage(updateType, tweets, componentId, data) {
 function updateComponent(componentId, componentData) {
   const data = componentData || components.getComponentDataById(componentId);
 
-  if (!componentId || !data || !Reflect.has(data, "screen_name")) {return logger.file(`Invalid params - component not found for ${componentId}`);}
+  if (!componentId || !data || !Reflect.has(data, "screen_name")) {
+    return logger.error(`Invalid params - component not found for ${componentId}`);
+  }
   twitter.init();
-  if (!twitter.credentialsExist()) {return logger.file("Credentials do not exist - can not update components");}
+  if (!twitter.credentialsExist()) {
+    return logger.error("Credentials do not exist - can not update components");
+  }
 
   twitter.getUserTweets(componentId, data.screen_name, (error, tweets)=>{
     if (error) {
@@ -46,7 +50,9 @@ function updateComponent(componentId, componentData) {
 function updateAllComponents() {
   logger.file(`Updating all components - re-fetching tweets and restarting streams`);
   twitter.init();
-  if (!twitter.credentialsExist()) {return logger.file("Credentials do not exist - can not update components");}
+  if (!twitter.credentialsExist()) {
+    return logger.error("Credentials do not exist - can not update components");
+  }
 
   twitter.finishAllRefreshes();
 

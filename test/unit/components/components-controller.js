@@ -1,4 +1,5 @@
 /* eslint-env mocha */
+/* eslint-disable max-statements */
 const assert = require("assert");
 const simple = require("simple-mock");
 const mock = simple.mock;
@@ -18,7 +19,7 @@ describe("Components-Controller - Unit", ()=>
     mock(twitter, "getUserTweets");
     mock(twitter, "finishAllRefreshes");
     mock(broadcastIPC, "twitterUpdate");
-    mock(logger, "file").returnWith();
+    mock(logger, "error").returnWith();
     mock(twitterWrapper, "getClient").returnWith({
       get: () => {},
       stream: () => {}
@@ -37,9 +38,9 @@ describe("Components-Controller - Unit", ()=>
   it("should not update tweets if invalid componentId", done =>
   {
     const testComponentId = "";
-    const testComponentData = {screen_name: "RiseVision", hashtag: "risevision"}
+    const testComponentData = {screen_name: "RiseVision", hashtag: "risevision"};
     componentsController.updateComponent(testComponentId, testComponentData);
-    assert(logger.file.lastCall.args[0].includes("Invalid params"));
+    assert(logger.error.lastCall.args[0].includes("Invalid params"));
     assert(!twitter.getUserTweets.called);
     done();
   });
@@ -49,8 +50,28 @@ describe("Components-Controller - Unit", ()=>
     const testComponentId = "test_component_id";
     const testComponentData = {};
     componentsController.updateComponent(testComponentId, testComponentData);
-    assert(logger.file.lastCall.args[0].includes("Invalid params"));
+    assert(logger.error.lastCall.args[0].includes("Invalid params"));
     assert(!twitter.getUserTweets.called);
+    done();
+  });
+
+  it("should not update tweets if no credentials", done =>
+  {
+    mock(twitter, "credentialsExist").returnWith(false);
+    const testComponentId = "test_component_id";
+    const testComponentData = {screen_name: "RiseVision", hashtag: "risevision"};
+    componentsController.updateComponent(testComponentId, testComponentData);
+    assert(logger.error.lastCall.args[0].includes("Credentials do not exist"));
+    assert(!twitter.getUserTweets.called);
+    done();
+  });
+
+  it("should not update components if no credentials", done =>
+  {
+    mock(twitter, "credentialsExist").returnWith(false);
+    componentsController.updateAllComponents();
+    assert(logger.error.lastCall.args[0].includes("Credentials do not exist"));
+    assert(!twitter.finishAllRefreshes.called);
     done();
   });
 
