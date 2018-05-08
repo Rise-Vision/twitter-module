@@ -12,8 +12,7 @@ function handleComponent(message) {
 }
 
 function handleClientList(message) {
-  return watch.checkIfLocalStorageIsAvailable(message)
-    .then(() => {licensing.checkIfLicensingIsAvailable(message)});
+  return licensing.checkIfLicensingIsAvailable(message);
 }
 
 function handleLicensingWatch() {
@@ -33,9 +32,16 @@ function handleFileUpdate(message) {
     return watch.receiveCredentialsFile(message)
     .then(() => {update.processAll()});
   }
-  if (message.filePath.endsWith("/content.json")) {
-    return watch.receiveContentFile(message);
+}
+
+function handleDisplayData(message) {
+  logger.debug(`handle display data message ${JSON.stringify(message)}`);
+  const displayData = message.displayData;
+  if (displayData && displayData.companyId) {
+    config.setCompanyId(displayData.companyId);
+    return watch.sendWatchMessagesForCredentials();
   }
+  return Promise.resolve();
 }
 
 function messageReceiveHandler(message) {
@@ -45,6 +51,8 @@ function messageReceiveHandler(message) {
       return handleClientList(message);
     case "LICENSING-UPDATE":
       return licensing.updateLicensingData(message);
+    case "DISPLAY-DATA-UPDATE":
+      return handleDisplayData(message);
     case "LICENSING-WATCH":
       return handleLicensingWatch();
     case "FILE-UPDATE":
@@ -54,7 +62,7 @@ function messageReceiveHandler(message) {
     case "WS-CLIENT-CONNECTED":
       return handleWSClientConnected(message);
     default:
-      logger.debug(`message recieved error - ${config.moduleName} - unrecognized message topic: ${message.topic}`);
+      logger.debug(`message received error - ${config.moduleName} - unrecognized message topic: ${message.topic}`);
   }
 }
 

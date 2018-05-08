@@ -5,7 +5,7 @@ const logger = require("../../src/logger");
 function broadcast(topic, data = {}) {
   const message = Object.assign({}, {"from": config.moduleName, topic}, data);
 
-  commonMessaging.broadcastMessage(message);
+  return commonMessaging.broadcastMessage(message);
 }
 
 function licensingUpdate(isAuthorized, userFriendlyStatus, data = {}) {
