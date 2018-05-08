@@ -119,7 +119,7 @@ describe("Messaging - Integration", function() {
         });
 
         setTimeout(function() {
-          assert.equal(logger.file.lastCall.args[0], "Credentials do not exist - can not update components");
+          assert.equal(logger.error.lastCall.args[0], "Credentials do not exist - can not update components");
           res();
         }, 200);
       });
@@ -180,7 +180,7 @@ describe("Messaging - Integration", function() {
         });
 
         setTimeout(function() {
-          assert.equal(logger.file.lastCall.args[0], "Credentials do not exist - can not update components");
+          assert.equal(logger.error.lastCall.args[0], "Credentials do not exist - can not update components");
           res();
         }, 1000);
       });
