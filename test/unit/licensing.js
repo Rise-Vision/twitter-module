@@ -80,7 +80,6 @@ describe("Licensing - Unit", ()=> {
       clients: ["logging", "system-metrics", "licensing"]
     })
     .then(() => {
-      console.log("HEY")
       // so requestLicensingData should have been called
       assert(licensingCommon.requestLicensingData.called);
       assert.equal(1, licensingCommon.requestLicensingData.callCount);

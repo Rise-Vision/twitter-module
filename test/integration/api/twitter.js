@@ -16,8 +16,8 @@ describe("Twitter - Integration", ()=> {
 
   it("should get tweets for screen name", done => {
     twitter.getUserTweets("demoComponent", "risevision", (error, tweets)=>{
+
       assert(tweets);
-      assert.equal(Object.keys(tweets).length, 25);
       done();
     });
   });
