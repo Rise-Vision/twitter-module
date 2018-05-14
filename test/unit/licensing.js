@@ -10,6 +10,7 @@ const licensing = require("../../src/licensing");
 const logger = require("../../src/logger");
 const componentsController = require("../../src/components/components-controller");
 const commonMessaging = require("common-display-module/messaging");
+const messaging = require("../../src/messaging/messaging");
 
 
 let expectedAuthorizedMessage = null;
@@ -22,6 +23,7 @@ describe("Licensing - Unit", ()=> {
     mock(componentsController, "finishAllRefreshes").returnWith();
     mock(commonMessaging, "broadcastMessage").returnWith();
     mock(licensingCommon, "requestLicensingData").resolveWith();
+    mock(messaging, "retryAfterStartup").returnWith();
 
     expectedAuthorizedMessage = {from: 'twitter',
       topic: 'licensing-update',
@@ -39,6 +41,7 @@ describe("Licensing - Unit", ()=> {
   afterEach(()=> {
     simple.restore();
     config.setAuthorized(null);
+    licensing.clearInitialRequestSent();
   });
 
 
@@ -80,10 +83,30 @@ describe("Licensing - Unit", ()=> {
       clients: ["logging", "system-metrics", "licensing"]
     })
     .then(() => {
-      // so requestLicensingData should have been called
+      // so requestLicensingData should have been called twice because the second time is called with the retry
       assert(licensingCommon.requestLicensingData.called);
-      assert.equal(1, licensingCommon.requestLicensingData.callCount);
+      assert.equal(2, licensingCommon.requestLicensingData.callCount);
 
+      done();
+    })
+    .catch(error => {
+      assert.fail(error);
+      done();
+    });
+  });
+
+  it("should call retryAfterStartup after calling for licensing and display info data", done => {
+    mock(licensing, "requestLicensingData").resolveWith();
+    mock(licensing, "requestDisplayData").resolveWith();
+
+    licensing.checkIfLicensingIsAvailable({
+      clients: ["logging", "system-metrics", "licensing"]
+    })
+    .then(() => {
+      const tenMinutesInMilliseconds = 10 * 60 * 1000;
+      assert.equal(2, messaging.retryAfterStartup.callCount);
+      assert.equal(tenMinutesInMilliseconds, messaging.retryAfterStartup.calls[0].args[1]);
+      assert.equal(tenMinutesInMilliseconds, messaging.retryAfterStartup.calls[1].args[1]);
       done();
     })
     .catch(error => {
