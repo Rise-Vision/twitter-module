@@ -27,7 +27,7 @@ function sendWatchMessagesForCredentials() {
 }
 
 function loadCurrentCredentials(credentialsPath) {
-  if (credentialsPath) {
+  if (credentialsPath && platform.fileExists(credentialsPath)) {
     logger.debug(`reading ${credentialsPath}`);
 
     return platform.readTextFile(credentialsPath)

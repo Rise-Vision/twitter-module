@@ -53,6 +53,7 @@ describe("Messaging -> Watch - Unit", ()=> {
   });
 
   it("should receive credentials file", done => {
+    simple.mock(platform, "fileExists").resolveWith(true);
     simple.mock(platform, "readTextFile").resolveWith('{"oauth_token":"dsadsa","oauth_token_secret":"dashdsa"}');
 
     watch.receiveCredentialsFile({
@@ -76,7 +77,22 @@ describe("Messaging -> Watch - Unit", ()=> {
     });
   });
 
+  it("should check if file exists in case of stale event", ()=>{
+    simple.mock(platform, "fileExists").resolveWith(false);
+    simple.mock(platform, "readTextFile");
+
+    watch.receiveCredentialsFile({
+      topic: "file-update",
+      status: "CURRENT",
+      ospath: "xxxxxxx/twitter.json"
+    })
+    .then(() => {
+      assert(!platform.readTextFile.called);
+    });
+  });
+
   it("should catch invalid credentials", ()=>{
+    simple.mock(platform, "fileExists").resolveWith(true);
     simple.mock(platform, "readTextFile").resolveWith('{}');
 
     watch.receiveCredentialsFile({
