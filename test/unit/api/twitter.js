@@ -3,6 +3,7 @@
 const assert = require("assert");
 const config = require("../../../src/config/config");
 const logger = require("../../../src/logger");
+const rewire = require("rewire");
 const sinon = require("sinon");
 const simple = require("simple-mock");
 simple.mock(config, "getTwitterCredentials").returnWith({oauth_token: "xxxxxx", oauth_token_secret: "xxxxxxxxxxx"});
@@ -13,10 +14,18 @@ const clientMock = {
 simple.mock(twitterWrapper, "getClient").returnWith(clientMock);
 const twitter = require("../../../src/api/twitter");
 twitter.init();
+const twitterRewire = rewire("../../../src/api/twitter");
+const filterTweets = twitterRewire.__get__('_filterTweets');
+
+// sample tweets data
+const onlyValidTweets = require("../../../test/data/valid-tweets.json");
+const someFilterableTweets = require("../../../test/data/filterable-tweets-1.json");
+const onlyFilterableTweets = require("../../../test/data/filterable-tweets-2.json");
 
 describe("Twitter - Unit", ()=> {
 
   beforeEach(()=> {
+
     simple.mock(clientMock, "get").callbackWith(null, [{id: 1234}]);
     simple.mock(logger, "error").returnWith();
   });
@@ -43,7 +52,24 @@ describe("Twitter - Unit", ()=> {
     });
   });
 
-  describe("Refresh", () => {
+  describe("- Filtering", () => {
+    it("should not filter out valid tweets", done => {
+      assert.deepEqual(filterTweets(onlyValidTweets).length, 25);
+      done();
+    });
+
+    it("should filter tweets for ones with text and not only links", done => {
+      assert.deepEqual(filterTweets(onlyFilterableTweets).length, 0);
+      done();
+    });
+
+    it("should only filter out invalid tweets but keep valid tweets", done => {
+      assert.deepEqual(filterTweets(someFilterableTweets).length, 24);
+      done();
+    });
+  });
+
+  describe("- Refresh", () => {
     let clock = null;
     beforeEach(()=> {
       clock = sinon.useFakeTimers();

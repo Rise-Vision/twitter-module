@@ -4,7 +4,7 @@ const entry = require("../../../../src/messaging/update/entry");
 
 describe("Messaging -> Update Component - Unit", ()=> {
 
-  describe("validate", ()=> {
+  describe("- Validation", ()=> {
     it("should validate correct entry value", ()=> {
       assert.equal(entry.validate(), false);
       assert.equal(entry.validate({component_id: "test component"}), false);
