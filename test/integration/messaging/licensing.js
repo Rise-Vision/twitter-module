@@ -48,7 +48,7 @@ describe("Licensing - Integration", ()=>
         })
         .then(() =>
         {
-          assert.equal(licensingCommon.requestLicensingData.callCount, 1);
+          assert.equal(licensingCommon.requestLicensingData.callCount, 2);
 
           done();
         })
