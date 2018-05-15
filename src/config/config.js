@@ -60,5 +60,6 @@ module.exports = {
   getAppCredentials,
   getTimeSinceStartup,
   setAuthorized,
-  isAuthorized
+  isAuthorized,
+  retryTimeLimit: 10 * 60 * 1000 // eslint-disable-line
 };

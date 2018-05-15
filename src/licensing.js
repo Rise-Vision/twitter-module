@@ -32,12 +32,9 @@ function checkIfLicensingIsAvailable(message) {
       return module.exports.requestLicensingData()
         .then(() => module.exports.requestDisplayData())
         .then(() => {
-          // 10 minutes
-          // eslint-disable-next-line
-          const timeLimit = 10 * 60 * 1000;
           initialRequestAlreadySent = true;
-          utils.retryAfterStartup(module.exports.requestLicensingData(), timeLimit, config.isAuthorized);
-          utils.retryAfterStartup(module.exports.requestDisplayData(), timeLimit, () =>{return config.getCompanyId !== null;});
+          utils.retryAfterStartup(module.exports.requestLicensingData, config.retryTimeLimit, config.isAuthorized);
+          utils.retryAfterStartup(module.exports.requestDisplayData, config.retryTimeLimit, () =>{return config.getCompanyId !== null;});
         });
       }
     }

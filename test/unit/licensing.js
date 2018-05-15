@@ -79,13 +79,14 @@ describe("Licensing - Unit", ()=> {
 
 
   it("should send LICENSING-REQUEST message if licensing module is available", done => {
+    mock(config, "isAuthorized").returnWith(true);
     licensing.checkIfLicensingIsAvailable({
       clients: ["logging", "system-metrics", "licensing"]
     })
     .then(() => {
-      // so requestLicensingData should have been called twice because the second time is called with the retry
+      // so requestLicensingData should have been called
       assert(licensingCommon.requestLicensingData.called);
-      assert.equal(2, licensingCommon.requestLicensingData.callCount);
+      assert.equal(1, licensingCommon.requestLicensingData.callCount);
 
       done();
     })
