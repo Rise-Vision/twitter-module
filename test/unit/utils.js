@@ -33,8 +33,11 @@ describe("Utils - Unit", ()=> {
 
     clock.tick(60 * 1000);
     assert(config.getTimeSinceStartup.called);
+
+    // action is logged
     assert.equal(logger.all.lastCall.args[0], "info");
     assert.equal(logger.all.lastCall.args[1], `retrying to call method ${fn.name}`);
+
     assert(fn.called);
   });
 
@@ -51,8 +54,9 @@ describe("Utils - Unit", ()=> {
     clock.tick(60 * 1000);
     assert.equal(1, config.getTimeSinceStartup.callCount);
 
-    // error is logged
-    assert.equal(logger.error.lastCall.args[0], `failed to reach stopcondition - not calling ${fn.name}`);
+    // action is logged
+    assert.equal(logger.all.lastCall.args[0], "info");
+    assert.equal(logger.all.lastCall.args[1], `failed to reach stopcondition - not calling ${fn.name}`);
   });
 
   it("should not call function if condition is true", () => {
@@ -68,8 +72,8 @@ describe("Utils - Unit", ()=> {
     clock.tick(60 * 1000);
     assert.equal(1, config.getTimeSinceStartup.callCount);
 
-    // should not log error
-    assert.equal(logger.error.callCount, 0);
+    // nothing was logged because condition is true
+    assert.equal(logger.all.callCount, 0);
 
   });
 });
