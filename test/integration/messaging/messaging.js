@@ -109,6 +109,7 @@ describe("Messaging - Integration", function() {
 
     it("does not update twitter component if credentials do not exist", () => {
       mock(twitter, "credentialsExist").returnWith(false);
+      mock(watch, "isWatchMessagesAlreadySentForCredentials").returnWith(true);
 
       return new Promise(res => {
         commonMessaging.broadcastMessage({
@@ -169,6 +170,7 @@ describe("Messaging - Integration", function() {
     it("does not update twitter components if credentials JSON file is deleted or does not exist", () => {
       mock(watch, "receiveCredentialsFile").returnWith(Promise.resolve());
       mock(twitter, "credentialsExist").returnWith(false);
+      mock(watch, "isWatchMessagesAlreadySentForCredentials").returnWith(true);
       mock(components, "getComponents").returnWith({"risevision": {"screen_name": "risevision", "hashtag": "testtag"}});
 
       return new Promise(res => {
