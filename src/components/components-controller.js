@@ -2,6 +2,7 @@ const components = require("./components");
 const logger = require("../../src/logger");
 const twitter = require("../../src/api/twitter");
 const broadcastIPC = require("../../src/messaging/broadcast-ipc");
+const watch = require("../messaging/watch/watch");
 
 function formatTweets(tweets) {
   return new Promise(res => {
@@ -35,7 +36,10 @@ function updateComponent(componentId, componentData) {
   }
   twitter.init();
   if (!twitter.credentialsExist()) {
-    return logger.error("Credentials do not exist - can not update components");
+    if (watch.isWatchMessagesAlreadySentForCredentials()) {
+      return logger.error("Credentials do not exist - can not update components");
+    }
+    return logger.all("info", "Watch message for credentials was not send yet - can not update components");
   }
 
   twitter.getUserTweets(componentId, data.screen_name, (error, tweets)=>{
@@ -51,7 +55,10 @@ function updateAllComponents() {
   logger.file(`Updating all components - re-fetching tweets and restarting streams`);
   twitter.init();
   if (!twitter.credentialsExist()) {
-    return logger.error("Credentials do not exist - can not update components");
+    if (watch.isWatchMessagesAlreadySentForCredentials()) {
+      return logger.error("Credentials do not exist - can not update components");
+    }
+    return logger.all("info", "Watch message for credentials was not send yet - can not update components");
   }
 
   twitter.finishAllRefreshes();

@@ -10,6 +10,7 @@ const twitter = require("../../../src/api/twitter");
 const components = require("../../../src/components/components");
 const broadcastIPC = require("../../../src/messaging/broadcast-ipc.js");
 const componentsController = rewire("../../../src/components/components-controller");
+const watch = require("../../../src/messaging/watch/watch");
 
 describe("Components-Controller - Unit", ()=>
 {
@@ -20,6 +21,7 @@ describe("Components-Controller - Unit", ()=>
     mock(twitter, "finishAllRefreshes");
     mock(broadcastIPC, "twitterUpdate");
     mock(logger, "error").returnWith();
+    mock(logger, "all").returnWith();
     mock(twitterWrapper, "getClient").returnWith({
       get: () => {},
       stream: () => {}
@@ -58,6 +60,7 @@ describe("Components-Controller - Unit", ()=>
   it("should not update tweets if no credentials", done =>
   {
     mock(twitter, "credentialsExist").returnWith(false);
+    mock(watch, "isWatchMessagesAlreadySentForCredentials").returnWith(true);
     const testComponentId = "test_component_id";
     const testComponentData = {screen_name: "RiseVision", hashtag: "risevision"};
     componentsController.updateComponent(testComponentId, testComponentData);
@@ -69,8 +72,33 @@ describe("Components-Controller - Unit", ()=>
   it("should not update components if no credentials", done =>
   {
     mock(twitter, "credentialsExist").returnWith(false);
+    mock(watch, "isWatchMessagesAlreadySentForCredentials").returnWith(true);
     componentsController.updateAllComponents();
     assert(logger.error.lastCall.args[0].includes("Credentials do not exist"));
+    assert(!twitter.finishAllRefreshes.called);
+    done();
+  });
+
+  it("should not update tweets if no watch message sent for credentials", done =>
+  {
+    mock(twitter, "credentialsExist").returnWith(false);
+    mock(watch, "isWatchMessagesAlreadySentForCredentials").returnWith(false);
+    const testComponentId = "test_component_id";
+    const testComponentData = {screen_name: "RiseVision", hashtag: "risevision"};
+    componentsController.updateComponent(testComponentId, testComponentData);
+    assert(logger.all.lastCall.args[0].includes("info"));
+    assert(logger.all.lastCall.args[1].includes("Watch message for credentials was not send yet"));
+    assert(!twitter.getUserTweets.called);
+    done();
+  });
+
+  it("should not update components if no watch message sent for credentials", done =>
+  {
+    mock(twitter, "credentialsExist").returnWith(false);
+    mock(watch, "isWatchMessagesAlreadySentForCredentials").returnWith(false);
+    componentsController.updateAllComponents();
+    assert(logger.all.lastCall.args[0].includes("info"));
+    assert(logger.all.lastCall.args[1].includes("Watch message for credentials was not send yet"));
     assert(!twitter.finishAllRefreshes.called);
     done();
   });

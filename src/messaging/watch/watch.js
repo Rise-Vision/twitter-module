@@ -12,6 +12,10 @@ function clearMessagesAlreadySentFlagForCredentials() {
   watchMessagesAlreadySentForCredentials = false;
 }
 
+function isWatchMessagesAlreadySentForCredentials() {
+  return watchMessagesAlreadySentForCredentials;
+}
+
 function sendWatchMessagesForCredentials() {
   if (!watchMessagesAlreadySentForCredentials) {
     const filePath = `risevision-company-notifications/${config.getCompanyId()}/credentials/twitter.json`;
@@ -71,5 +75,6 @@ function receiveCredentialsFile(message) {
 module.exports = {
   clearMessagesAlreadySentFlagForCredentials,
   receiveCredentialsFile,
-  sendWatchMessagesForCredentials
+  sendWatchMessagesForCredentials,
+  isWatchMessagesAlreadySentForCredentials
 };
