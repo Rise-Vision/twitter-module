@@ -9,8 +9,6 @@ let companyId = null;
 // will turn to either true or false when valid license data is received
 let authorized = null;
 
-const timeStarted = new Date();
-
 function getCompanyId() {
   return companyId;
 }
@@ -39,10 +37,6 @@ function isAuthorized() {
   return authorized;
 }
 
-function getTimeSinceStartup() {
-  return Math.abs(new Date() - timeStarted);
-}
-
 module.exports = {
   secondMillis: 1000,
   defaultComponentUpdateIntervalSeconds: 60,
@@ -58,9 +52,6 @@ module.exports = {
   getCompanyId,
   setCompanyId,
   getAppCredentials,
-  getTimeSinceStartup,
   setAuthorized,
-  isAuthorized,
-  retryTimeLimit: 10 * 60 * 1000, // eslint-disable-line
-  waitTimeForRetry: 60 * 1000 // eslint-disable-line
+  isAuthorized
 };
