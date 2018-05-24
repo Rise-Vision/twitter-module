@@ -5,7 +5,6 @@ const config = require("./config/config");
 const componentsController = require("./components/components-controller");
 const broadcastIPC = require("./messaging/broadcast-ipc");
 const logger = require("./logger");
-const utils = require("./utils");
 
 let initialRequestAlreadySent = false;
 
@@ -31,11 +30,7 @@ function checkIfLicensingIsAvailable(message) {
     if (clients.includes("licensing")) {
       return module.exports.requestLicensingData()
         .then(() => module.exports.requestDisplayData())
-        .then(() => {
-          initialRequestAlreadySent = true;
-          utils.retryAfterStartup(module.exports.requestLicensingData, config.retryTimeLimit, config.isAuthorized);
-          utils.retryAfterStartup(module.exports.requestDisplayData, config.retryTimeLimit, () =>{return config.getCompanyId !== null;});
-        });
+        .then(() => initialRequestAlreadySent = true);
       }
     }
 
