@@ -33,10 +33,12 @@ function sendWatchMessagesForCredentials() {
 function loadCurrentCredentials(credentialsPath) {
   if (credentialsPath && platform.fileExists(credentialsPath)) {
     logger.debug(`reading ${credentialsPath}`);
+    let retrievedData = null;
 
     return platform.readTextFile(credentialsPath)
     .then(data =>
     {
+      retrievedData = data;
       const credentials = JSON.parse(data);
 
       if (!Reflect.has(credentials, "oauth_token") || !Reflect.has(credentials, "oauth_token_secret")) {
@@ -50,7 +52,7 @@ function loadCurrentCredentials(credentialsPath) {
 
     })
     .catch(error =>
-      logger.error(error.message, `Could not parse credentials file ${credentialsPath}`)
+      logger.error(error.message, `Could not parse credentials file ${credentialsPath} - ${retrievedData}`)
     );
   }
 

@@ -98,7 +98,7 @@ describe("Components-Controller - Unit", ()=>
     mock(watch, "isWatchMessagesAlreadySentForCredentials").returnWith(false);
     componentsController.updateAllComponents();
     assert(logger.all.lastCall.args[0].includes("info"));
-    assert(logger.all.lastCall.args[1].includes("Watch message for credentials was not send yet"));
+    assert(logger.all.lastCall.args[1].includes("Watch message for credentials was not sent yet"));
     assert(!twitter.finishAllRefreshes.called);
     done();
   });
