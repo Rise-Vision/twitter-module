@@ -8,7 +8,7 @@ function createClient() {
   const oauthTokenSecret = twitterCredentials ? twitterCredentials.oauth_token_secret : "";
   const accessTokenKey = process.env.ACCESS_TOKEN_KEY ? process.env.ACCESS_TOKEN_KEY : oauthToken;
   const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET ? process.env.ACCESS_TOKEN_SECRET : oauthTokenSecret;
-  const options = Object.assign({}, config.getAppCredentials(), {"access_token_key": accessTokenKey, "access_token_secret": accessTokenSecret});
+  const options = Object.assign({}, config.getAppCredentials(), {"access_token_key": accessTokenKey, "access_token_secret": accessTokenSecret, request_options: {proxy: config.getProxyUri()}});
   client = new Twitter(options);
 }
 

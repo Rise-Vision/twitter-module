@@ -37,6 +37,11 @@ function isAuthorized() {
   return authorized;
 }
 
+function getProxyUri() {
+    const proxy = common.getProxyAgents();
+    return (proxy.httpsAgent && proxy.httpsAgent.proxyUri) || (proxy.httpAgent && proxy.httpAgent.proxyUri) || null // eslint-disable-line no-extra-parens
+}
+
 module.exports = {
   secondMillis: 1000,
   defaultComponentUpdateIntervalSeconds: 60,
@@ -53,5 +58,6 @@ module.exports = {
   setCompanyId,
   getAppCredentials,
   setAuthorized,
-  isAuthorized
+  isAuthorized,
+  getProxyUri
 };
