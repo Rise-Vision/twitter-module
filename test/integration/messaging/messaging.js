@@ -39,9 +39,7 @@ describe("Messaging - Integration", function() {
       mock(componentsController, "updateComponent");
       mock(broadcastIPC, "twitterUpdate");
 
-      mock(commonConfig, "getDisplaySettingsSync").returnWith({
-        displayid: "ls-test-id", displayId: "ls-test-id"
-      });
+      mock(commonConfig, "getDisplayId").returnWith("ls-test-id");
 
       testComponentId = {component_id: "test_id"}
       testComponentData = {screen_name: "test_screen_name", hashtag: "testtag"};
