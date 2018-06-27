@@ -11,7 +11,8 @@ const logger = require("rise-common-electron/logger")(externalLogger, logFolder,
 // Creates the detail data structure that the logging functions expect.
 // Assigns "event_details" and "display_id", that are expected in the events table
 function detailsFor(eventDetails, data = {}) {
-  return common.getDisplayId().then(displayId =>
+  return common.getDisplayId()
+  .then(displayId =>
     Object.assign({
       "event_details": eventDetails,
       "display_id": displayId,
