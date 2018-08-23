@@ -6,9 +6,6 @@ const MODULE_NAME = "twitter";
 let twitterCredentials = null;
 let companyId = null;
 
-// will turn to either true or false when valid license data is received
-let authorized = null;
-
 function getCompanyId() {
   return companyId;
 }
@@ -29,14 +26,6 @@ function getAppCredentials() {
   return twitterAppCredentials;
 }
 
-function setAuthorized(flag) {
-  authorized = flag;
-}
-
-function isAuthorized() {
-  return authorized;
-}
-
 module.exports = {
   secondMillis: 1000,
   defaultComponentUpdateIntervalSeconds: 60,
@@ -51,7 +40,5 @@ module.exports = {
   setTwitterCredentials,
   getCompanyId,
   setCompanyId,
-  getAppCredentials,
-  setAuthorized,
-  isAuthorized
+  getAppCredentials
 };

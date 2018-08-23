@@ -8,18 +8,6 @@ function broadcast(topic, data = {}) {
   return commonMessaging.broadcastMessage(message);
 }
 
-function licensingUpdate(isAuthorized, userFriendlyStatus, data = {}) {
-  if (isAuthorized !== null && userFriendlyStatus) {
-    logger.file(`Broadcasting LICENSING-UPDATE - ${userFriendlyStatus}`);
-
-    const messageData = Object.assign({}, {'is_authorized': isAuthorized, 'user_friendly_status': userFriendlyStatus}, data);
-    const messageObject = Object.assign({}, {through: 'ws'}, {data: messageData});
-    broadcast("licensing-update", messageObject);
-  } else {
-    logger.file(`Attempted Licensing Update - Authorization status not recieved`);
-  }
-}
-
 function twitterUpdate(data = {}) {
   if (!data.status) {throw new Error("broadcast - TWITTER-UPDATE - status is invalid");}
   logger.file(`Broadcasting ${data.status} TWITTER-UPDATE`);
@@ -30,6 +18,5 @@ function twitterUpdate(data = {}) {
 
 module.exports = {
   broadcast,
-  licensingUpdate,
   twitterUpdate
 }

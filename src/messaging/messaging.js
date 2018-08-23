@@ -5,23 +5,17 @@ const config = require("../../src/config/config");
 const watch = require("./watch/watch");
 const update = require("./update/update");
 const logger = require("../../src/logger");
-const licensing = require("../../src/licensing");
 
 function handleComponent(message) {
   return update.process(message);
 }
 
 function handleClientList(message) {
-  return licensing.checkIfLicensingIsAvailable(message);
-}
-
-function handleLicensingWatch() {
-  return licensing.sendLicensing();
+  return message;
 }
 
 function handleWSClientConnected() {
   update.clear();
-  return licensing.sendLicensing();
 }
 
 function handleFileUpdate(message) {
@@ -49,12 +43,8 @@ function messageReceiveHandler(message) {
   switch (message.topic.toUpperCase()) {
     case "CLIENT-LIST":
       return handleClientList(message);
-    case "LICENSING-UPDATE":
-      return licensing.updateLicensingData(message);
     case "DISPLAY-DATA-UPDATE":
       return handleDisplayData(message);
-    case "LICENSING-WATCH":
-      return handleLicensingWatch();
     case "FILE-UPDATE":
       return handleFileUpdate(message);
     case "TWITTER-WATCH":
