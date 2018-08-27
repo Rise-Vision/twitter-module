@@ -5,6 +5,15 @@ const MODULE_NAME = "twitter";
 
 let twitterCredentials = null;
 let companyId = null;
+let isReadyForDataRequests = null;
+
+function getReadyStatus() {
+  return isReadyForDataRequests;
+}
+
+function setReadyStatus(status) {
+  isReadyForDataRequests = status;
+}
 
 function getCompanyId() {
   return companyId;
@@ -40,5 +49,7 @@ module.exports = {
   setTwitterCredentials,
   getCompanyId,
   setCompanyId,
-  getAppCredentials
+  getAppCredentials,
+  getReadyStatus,
+  setReadyStatus
 };

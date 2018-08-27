@@ -39,7 +39,7 @@ function updateComponent(componentId, componentData) {
     if (watch.isWatchMessagesAlreadySentForCredentials()) {
       return logger.error("Credentials do not exist - can not update components");
     }
-    return logger.all("info", "Watch message for credentials was not send yet - can not update components");
+    return logger.all("info", "Watch message for credentials was not sent yet - can not update components");
   }
 
   twitter.getUserTweets(componentId, data.screen_name, (error, tweets)=>{
