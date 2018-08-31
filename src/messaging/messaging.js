@@ -8,7 +8,7 @@ const logger = require("../../src/logger");
 const status = require("./status/status");
 
 function handleStatusRequest() {
-  return status.getReadyStatus();
+  return status.sendStatusMessage();
 }
 
 function handleComponent(message) {

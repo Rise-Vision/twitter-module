@@ -39,8 +39,6 @@ function loadCurrentCredentials(credentialsPath) {
     return platform.readTextFile(credentialsPath)
     .then(data =>
     {
-      status.updateReadyStatus(true);
-
       retrievedData = data;
       const credentials = JSON.parse(data);
 
@@ -54,6 +52,7 @@ function loadCurrentCredentials(credentialsPath) {
       config.setTwitterCredentials(credentials);
       twitterWrapper.createClient();
 
+      status.updateReadyStatus(true);
     })
     .catch(error =>
     {
