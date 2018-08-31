@@ -1,6 +1,7 @@
 /* eslint-disable line-comment-position, no-inline-comments, max-statements */
 
 const config = require("../../../src/config/config");
+const status = require("../../../src/messaging/status/status");
 const logger = require("../../../src/logger");
 const platform = require("rise-common-electron").platform;
 const broadcastIPC = require("../../../src/messaging/broadcast-ipc.js");
@@ -42,6 +43,7 @@ function loadCurrentCredentials(credentialsPath) {
       const credentials = JSON.parse(data);
 
       if (!Reflect.has(credentials, "oauth_token") || !Reflect.has(credentials, "oauth_token_secret")) {
+        status.updateReadyStatus(false);
         throw new Error("Invalid Credentials");
       }
 
@@ -50,10 +52,13 @@ function loadCurrentCredentials(credentialsPath) {
       config.setTwitterCredentials(credentials);
       twitterWrapper.createClient();
 
+      status.updateReadyStatus(true);
     })
     .catch(error =>
-      logger.error(error.message, `Could not parse credentials file ${credentialsPath} - ${retrievedData}`)
-    );
+    {
+      status.updateReadyStatus(false);
+      logger.error(error.message, `Could not parse credentials file ${credentialsPath} - ${retrievedData}`);
+    });
   }
 
   // allows linking in tests.
@@ -67,6 +72,7 @@ function receiveCredentialsFile(message) {
     case "DELETED": case "NOEXIST":
       config.setTwitterCredentials(null);
       twitterWrapper.createClient();
+      status.updateReadyStatus(false);
       // allows linking in tests.
       return Promise.resolve();
 

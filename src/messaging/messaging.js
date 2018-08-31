@@ -5,6 +5,11 @@ const config = require("../../src/config/config");
 const watch = require("./watch/watch");
 const update = require("./update/update");
 const logger = require("../../src/logger");
+const status = require("./status/status");
+
+function handleStatusRequest() {
+  return status.sendStatusMessage();
+}
 
 function handleComponent(message) {
   return update.process(message);
@@ -24,7 +29,9 @@ function handleFileUpdate(message) {
   }
   if (message.filePath.endsWith("/twitter.json")) {
     return watch.receiveCredentialsFile(message)
-    .then(() => {update.processAll()});
+    .then(() => {
+        update.processAll();
+    });
   }
 }
 
@@ -49,6 +56,8 @@ function messageReceiveHandler(message) {
       return handleFileUpdate(message);
     case "TWITTER-WATCH":
       return handleComponent(message);
+    case "TWITTER-STATUS-REQUEST":
+      return handleStatusRequest();
     case "WS-CLIENT-CONNECTED":
       return handleWSClientConnected(message);
     default:
