@@ -1,11 +1,14 @@
 const companyConfigBucket = "risevision-company-notifications";
 const displayConfigBucket = "risevision-display-notifications";
 const commonMessaging = require("common-display-module/messaging");
+const broadcastIPC = require("./broadcast-ipc");
 const config = require("../../src/config/config");
 const watch = require("./watch/watch");
 const update = require("./update/update");
 const logger = require("../../src/logger");
 const status = require("./status/status");
+
+let initialRequestAlreadySent = false;
 
 function handleStatusRequest() {
   return status.sendStatusMessage();
@@ -16,7 +19,7 @@ function handleComponent(message) {
 }
 
 function handleClientList(message) {
-  return message;
+  requestDisplayDataIfLicensingAvailable(message);
 }
 
 function handleWSClientConnected() {
@@ -32,6 +35,16 @@ function handleFileUpdate(message) {
     .then(() => {
         update.processAll();
     });
+  }
+}
+
+function requestDisplayDataIfLicensingAvailable(message) {
+  if (!initialRequestAlreadySent) {
+    const clients = message.clients;
+    if (clients.includes("licensing")) {
+      broadcastIPC.broadcast('display-data-request');
+      initialRequestAlreadySent = true;
+    }
   }
 }
 
