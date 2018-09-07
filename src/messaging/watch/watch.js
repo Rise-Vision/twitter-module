@@ -47,9 +47,10 @@ function loadCurrentCredentials(credentialsPath) {
         throw new Error("Invalid Credentials");
       }
 
-      logger.file(`credentials changed ${JSON.stringify(credentials)}`);
+      logger.file(`credentials retrieved ${JSON.stringify(credentials)}`);
 
       config.setTwitterCredentials(credentials);
+
       twitterWrapper.createClient();
 
       status.updateReadyStatus(true);
