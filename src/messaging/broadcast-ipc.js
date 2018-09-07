@@ -8,6 +8,14 @@ function broadcast(topic, data = {}) {
   return commonMessaging.broadcastMessage(message);
 }
 
+function statusUpdate() {
+  const statusValue = config.getReadyStatus() !== null && config.getReadyStatus() === true;
+  logger.file(`Credentials changed - sending credentials status - ${statusValue}`);
+
+  const messageObject = {"status": statusValue, "userFriendlyStatus": statusValue ? "ready" : "not ready", through: 'ws'};
+  broadcast("twitter-status-update", messageObject);
+}
+
 function twitterUpdate(data = {}) {
   if (!data.status) {throw new Error("broadcast - TWITTER-UPDATE - status is invalid");}
   logger.file(`Broadcasting ${data.status} TWITTER-UPDATE`);
@@ -18,5 +26,6 @@ function twitterUpdate(data = {}) {
 
 module.exports = {
   broadcast,
+  statusUpdate,
   twitterUpdate
 }
