@@ -19,8 +19,9 @@ module.exports = {
       components.addComponent(message.data.component_id, Object.assign({}, {screen_name, hashtag}));
       componentsController.updateComponent(message.data.component_id);
 
-      // The watch was removed because twitter.json was DELETED or NOEXIST;
-      // so we create the watch again to see if it's back.
+      // The watch was removed because twitter.json was DELETED or NOEXIST,
+      // and thus the ready status was changed from null to false;
+      // so we send the WATCH message again to see if the file is back.
       if (config.getReadyStatus() === false && watch.isWatchMessagesAlreadySentForCredentials()) {
         watch.clearMessagesAlreadySentFlagForCredentials();
         watch.sendWatchMessagesForCredentials();
