@@ -74,6 +74,10 @@ function receiveCredentialsFile(message) {
       config.setTwitterCredentials(null);
       twitterWrapper.createClient();
       status.updateReadyStatus(false);
+
+      // so the WATCH message can be sent again if credentials are added again later
+      clearMessagesAlreadySentFlagForCredentials();
+
       // allows linking in tests.
       return Promise.resolve();
 
