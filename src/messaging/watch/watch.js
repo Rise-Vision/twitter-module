@@ -58,7 +58,7 @@ function loadCurrentCredentials(credentialsPath) {
     .catch(error =>
     {
       status.updateReadyStatus(false);
-      logger.error(error.message, `Could not parse credentials file ${credentialsPath} - ${retrievedData}`);
+      logger.error(error.message, `Could not parse credentials file - ${retrievedData}`);
     });
   }
 
