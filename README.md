@@ -16,30 +16,14 @@ At this time Chrome is the only browser that this project and Rise Vision suppor
 - Webpack
 - Common-Display-Module from Rise Vision
 
-## Development
-
-### Local Development Environment Setup and Installation
-
-First you need to have NPM and NodeJS installed.
-
-Then you can clone the project with the following command
-```
-git clone https://github.com/Rise-Vision/twitter-module.git
-```
-
-### Run Local
-First you need to install the dependencies with:
-```
-npm install
-```
-
-Then you can start the module with:
-```
-npm run start
-```
-
 ### Dependencies
-- Twitter
+[Twitter Component](https://github.com/Rise-Vision/rise-twitter) and [Rise Player](https://github.com/Rise-Vision/rise-player) Modules
+
+### Build
+You can build the project with:
+```
+npm run build
+```
 
 ### Testing
 Unit tests can be run with:
@@ -52,10 +36,42 @@ Integration tests can be run with:
 npm run test-integration
 ```
 
-### Build
-You can build the project with:
+## Development
+
+### Local Development Environment Setup and Installation
+
+First you need to have NPM and NodeJS installed.
+
+Then you can clone the project with the following command
 ```
-npm run build
+git clone https://github.com/Rise-Vision/twitter-module.git
+```
+
+### Run Locally
+First you need to install the dependencies with:
+```
+npm install
+```
+
+Then you can start the module with:
+```
+npm run start
+```
+
+### Manual Testing / Local Development
+It is best that you run Twitter Component to test the expected behaviors. It is not recommended that you clone, install and run every individual module (i.e. Twitter Module, Licensing Module, Local Storage Module) and run Twitter Component Locally because Twitter Module needs a number of overwrite modifications to make it function properly such as hard-coding in valid Credentials.
+
+Instead, manually test using an actual display or use a simulated display via software similar to VirtualBox.
+
+## Deploying to Staging
+
+Merging to master automatically deploys to beta Player
+
+## Deploying to Stable
+
+Pull Master branch into Stable branch and follow Player staggered release process
+```
+git pull origin master
 ```
 
 ## Submitting Issues
