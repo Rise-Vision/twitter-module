@@ -44,7 +44,8 @@ function updateComponent(componentId, componentData) {
 
   twitter.getUserTweets(componentId, data.screen_name, (error, tweets)=>{
     if (error) {
-      logger.error(`Could not get tweets for ${
+      // log as warning because the problem could be that an invalid Twitter username was set.
+      logger.all('warning', `Could not get tweets for ${
         JSON.stringify(data)
       }, error: ${
         JSON.stringify(error)
