@@ -44,7 +44,11 @@ function updateComponent(componentId, componentData) {
 
   twitter.getUserTweets(componentId, data.screen_name, (error, tweets)=>{
     if (error) {
-      logger.file(`Could get tweets for ${JSON.stringify(data)}`);
+      logger.error(`Could not get tweets for ${
+        JSON.stringify(data)
+      }, error: ${
+        JSON.stringify(error)
+      }`);
     } else {
       sendUpdateMessage("Current", tweets, componentId, data);
     }
